@@ -12,13 +12,13 @@ function Replace-Required {
 
 $p = 'src/ui/player_panel.rs'
 
-# Fix the broken vertical wage presentation by replacing the v0.7 hero with a bounded,
-# horizontal FMRTE-inspired profile hero. Keep Element branding and original implementation.
+# Replace the complete existing Element player hero. The stable boundary after the hero is
+# the Contract-tab guard from upstream; later UI layers can freely rename/rebuild navigation.
 $text = [IO.File]::ReadAllText((Join-Path $SourceRoot $p))
 $start = $text.IndexOf('    // Element UI 2.0 hero.')
 if ($start -lt 0) { throw 'Element player hero start marker not found' }
-$end = $text.IndexOf('    // Element profile navigation:', $start)
-if ($end -lt 0) { throw 'Element player hero end marker not found' }
+$end = $text.IndexOf('    if *tab == PlayerTab::Contract', $start)
+if ($end -lt 0) { throw 'Element player hero end boundary not found' }
 $newHero = @'
     // Element v1.0 player hero: bounded horizontal layout; metric values never wrap vertically.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
