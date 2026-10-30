@@ -20,7 +20,7 @@ if ($tail -lt 0) { throw 'Element player hero local tail not found' }
 $end = $tail + $tailMarker.Length
 while ($end -lt $text.Length -and ($text[$end] -eq "`r" -or $text[$end] -eq "`n")) { $end++ }
 $newHero = @'
-    // Element v1.2 player hero: Sortitoutsi face_<UID> resolver + iconface fallback.
+    // Element v1.3 player hero: Sortitoutsi resolver + direct PNG byte decoding.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
@@ -75,11 +75,27 @@ $newHero = @'
         .show(ui, |ui| {
             ui.set_min_height(122.0);
             ui.horizontal(|ui| {
+                let mut face_rendered = false;
                 if let Some(img_path) = resolved_face_file.as_ref() {
-                    let uri = format!("file:///{}", img_path.to_string_lossy().replace('\\', "/"));
-                    ui.add(egui::Image::new(uri).fit_to_exact_size(egui::vec2(92.0, 92.0)));
-                } else {
-                    ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("NO FACE"); }); });
+                    if let Ok(bytes) = std::fs::read(img_path) {
+                        if let Ok(decoded) = image::load_from_memory(&bytes) {
+                            let rgba = decoded.to_rgba8();
+                            let size = [rgba.width() as usize, rgba.height() as usize];
+                            let color_image = egui::ColorImage::from_rgba_unmultiplied(size, rgba.as_raw());
+                            let texture = ui.ctx().load_texture(
+                                format!("element_face_{}", face_uid.unwrap_or(0)),
+                                color_image,
+                                egui::TextureOptions::LINEAR,
+                            );
+                            ui.add(egui::Image::new(&texture).fit_to_exact_size(egui::vec2(92.0, 92.0)));
+                            face_rendered = true;
+                        }
+                    }
+                }
+                if !face_rendered {
+                    ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| {
+                        ui.centered_and_justified(|ui| { ui.label("NO FACE"); });
+                    });
                 }
                 ui.add_space(12.0);
                 ui.vertical(|ui| {
@@ -115,4 +131,4 @@ $text = $text.Substring(0,$start) + $newHero + $text.Substring($end)
 Replace-Required $p 'ui.add_enabled(false, egui::Button::new("Force Transfer — Experimental"));' 'ui.add_enabled(false, egui::Button::new("Force Transfer — validation required"));'
 Replace-Required $p 'LOCKED: full FM27 membership chain not verified yet — no partial pointer writes allowed.' 'VALIDATION GATE: destination team is mapped; squad/contract membership must pass live read-back before Force Transfer unlocks.'
 
-Write-Host 'Element v1.2 Sortitoutsi face resolver + readable money hero applied.'
+Write-Host 'Element v1.3 direct PNG face decoding + Sortitoutsi resolver applied.'
