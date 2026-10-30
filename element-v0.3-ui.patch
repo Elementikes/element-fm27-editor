@@ -1,8 +1,7 @@
 diff --git a/src/settings.rs b/src/settings.rs
 --- a/src/settings.rs
 +++ b/src/settings.rs
-@@ -27,7 +27,7 @@ impl Theme {
- 
+@@ -30,7 +30,7 @@ impl Theme {
      pub fn visuals(self) -> egui::Visuals {
          match self {
 -            Theme::Dark     => egui::Visuals::dark(),
@@ -10,7 +9,7 @@ diff --git a/src/settings.rs b/src/settings.rs
              Theme::Light    => egui::Visuals::light(),
              Theme::DarkBlue => dark_blue_visuals(),
          }
-@@ -35,6 +35,21 @@ impl Theme {
+@@ -38,6 +38,21 @@ impl Theme {
      }
  }
  
@@ -18,11 +17,11 @@ diff --git a/src/settings.rs b/src/settings.rs
 +/// dense attribute tables remain readable during long editing sessions.
 +fn element_visuals() -> egui::Visuals {
 +    let mut v = egui::Visuals::dark();
-+    v.window_fill      = egui::Color32::from_rgb(13, 16, 23);
-+    v.panel_fill       = egui::Color32::from_rgb(17, 21, 30);
-+    v.faint_bg_color   = egui::Color32::from_rgb(25, 30, 43);
++    v.window_fill = egui::Color32::from_rgb(13, 16, 23);
++    v.panel_fill = egui::Color32::from_rgb(17, 21, 30);
++    v.faint_bg_color = egui::Color32::from_rgb(25, 30, 43);
 +    v.extreme_bg_color = egui::Color32::from_rgb(8, 10, 15);
-+    v.hyperlink_color  = egui::Color32::from_rgb(116, 145, 255);
++    v.hyperlink_color = egui::Color32::from_rgb(116, 145, 255);
 +    v.selection.bg_fill = egui::Color32::from_rgb(75, 96, 210);
 +    v.widgets.inactive.bg_fill = egui::Color32::from_rgb(28, 34, 47);
 +    v.widgets.hovered.bg_fill = egui::Color32::from_rgb(40, 49, 68);
@@ -36,8 +35,7 @@ diff --git a/src/settings.rs b/src/settings.rs
 diff --git a/src/main.rs b/src/main.rs
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -71,7 +71,7 @@ fn main() -> eframe::Result {
-     let settings = AppSettings::load();
+@@ -74,7 +74,7 @@ fn main() -> eframe::Result {
      let f = settings.scale.zoom_factor();
      let options = eframe::NativeOptions {
          viewport: eframe::egui::ViewportBuilder::default()
@@ -46,23 +44,10 @@ diff --git a/src/main.rs b/src/main.rs
              .with_title(title),
          ..Default::default()
      };
-@@ -81,6 +81,13 @@ fn main() -> eframe::Result {
-         options,
-         Box::new(move |cc| {
-+            cc.egui_ctx.style_mut(|style| {
-+                style.spacing.item_spacing = eframe::egui::vec2(10.0, 8.0);
-+                style.spacing.button_padding = eframe::egui::vec2(12.0, 7.0);
-+                style.spacing.indent = 20.0;
-+                style.spacing.interact_size.y = 28.0;
-+                style.visuals = settings.theme.visuals();
-+            });
-             let app = FmEditorApp::new(cc).with_branch(branch);
-             #[cfg(debug_assertions)]
-             let app = app.with_mcp_state(mcp_state);
 diff --git a/src/ui/player_panel.rs b/src/ui/player_panel.rs
 --- a/src/ui/player_panel.rs
 +++ b/src/ui/player_panel.rs
-@@ -648,8 +648,16 @@ fn show_transfer_lab(
+@@ -648,8 +648,14 @@ fn show_transfer_lab(
      player: &mut PlayerRecord,
      edits: &mut Vec<FieldEdit>,
  ) {
@@ -75,35 +60,25 @@ diff --git a/src/ui/player_panel.rs b/src/ui/player_panel.rs
 +    ui.label(egui::RichText::new("Market status, asking price and contract controls in one place.").weak());
      ui.add_space(8.0);
 +
-+    egui::Frame::group(ui.style()).show(ui, |ui| {
-+        ui.set_min_width(460.0);
-+        ui.strong("PLAYER MARKET CONTROL");
-+        ui.add_space(4.0);
++    ui.strong("PLAYER MARKET CONTROL");
  
      if let (Some(cr), Some(caddr)) = (player.contract_raw.as_mut(), player.contract_addr) {
          ui.strong("Market Status");
-@@ -687,13 +695,16 @@ fn show_transfer_lab(
-     if let Some(f) = schemas.field("p_asking_price") {
-         edits.extend(field_widget::optional_money_edit(ui, "Asking Price", &mut player.raw, &f, player.addr));
+@@ -691,9 +697,10 @@ fn show_transfer_lab(
      }
-+    });
  
      ui.add_space(12.0);
 -    ui.separator();
 -    ui.strong("Advanced Transfer Actions");
 -    ui.label("These need multiple FM27 records to be updated atomically. They are intentionally disabled until the memory chains are verified on the current build.");
--    ui.horizontal_wrapped(|ui| {
--        ui.add_enabled(false, egui::Button::new("Attract Clubs"));
--        ui.add_enabled(false, egui::Button::new("Create Future Transfer"));
++    ui.separator();
++    ui.strong("ADVANCED TRANSFER ACTIONS");
++    ui.label(egui::RichText::new("Experimental actions unlock only after linked FM27 records are verified. This prevents half-transfers and damaged saves.").weak());
++    ui.add_space(6.0);
+     ui.horizontal_wrapped(|ui| {
+         ui.add_enabled(false, egui::Button::new("Attract Clubs"));
+         ui.add_enabled(false, egui::Button::new("Create Future Transfer"));
 -        ui.add_enabled(false, egui::Button::new("Move Player Now"));
-+    egui::Frame::group(ui.style()).show(ui, |ui| {
-+        ui.strong("ADVANCED TRANSFER ACTIONS");
-+        ui.label(egui::RichText::new("Experimental actions unlock only after every linked FM27 record is verified. This prevents half-transfers and damaged saves.").weak());
-+        ui.add_space(6.0);
-+        ui.horizontal_wrapped(|ui| {
-+            ui.add_enabled(false, egui::Button::new("Attract Clubs"));
-+            ui.add_enabled(false, egui::Button::new("Create Future Transfer"));
-+            ui.add_enabled(false, egui::Button::new("Force Transfer"));
-+        });
++        ui.add_enabled(false, egui::Button::new("Force Transfer"));
      });
  }
