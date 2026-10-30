@@ -1,9 +1,15 @@
 $ErrorActionPreference = 'Stop'
 
+# GitHub Actions invokes this script while the shell is in source/, but
+# PowerShell resolves relative .NET file paths from the process working dir.
+$SourceRoot = (Get-Location).Path
+
 function Replace-Required {
-    param([string]$Path, [string]$Old, [string]$New)
+    param([string]$RelativePath, [string]$Old, [string]$New)
+    $Path = Join-Path $SourceRoot $RelativePath
+    if (-not (Test-Path -LiteralPath $Path)) { throw "Source file not found: $Path" }
     $text = [IO.File]::ReadAllText($Path)
-    if (-not $text.Contains($Old)) { throw "Expected text not found in $Path`n--- expected ---`n$Old" }
+    if (-not $text.Contains($Old)) { throw "Expected text not found in $RelativePath`n--- expected ---`n$Old" }
     $text = $text.Replace($Old, $New)
     [IO.File]::WriteAllText($Path, $text, [Text.UTF8Encoding]::new($false))
 }
