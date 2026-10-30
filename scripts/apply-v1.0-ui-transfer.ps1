@@ -22,7 +22,7 @@ if ($tail -lt 0) { throw 'Element player hero local tail not found' }
 $end = $tail + $tailMarker.Length
 while ($end -lt $text.Length -and ($text[$end] -eq "`r" -or $text[$end] -eq "`n")) { $end++ }
 $newHero = @'
-    // Element v1.0 player hero: bounded horizontal layout; metric values never wrap vertically.
+    // Element v1.0 player hero: bounded horizontal layout; metric cards reserve enough width.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
@@ -57,9 +57,10 @@ $newHero = @'
                     for (label, val) in [("WAGE", wage.as_str()), ("ASKING", value.as_str()), ("PA", pa.as_str()), ("CA", ca.as_str())] {
                         egui::Frame::none().fill(egui::Color32::from_rgb(27, 76, 176)).inner_margin(egui::Margin::symmetric(14, 10)).show(ui, |ui| {
                             ui.set_min_width(112.0);
+                            ui.set_max_width(150.0);
                             ui.vertical_centered(|ui| {
                                 ui.label(egui::RichText::new(label).size(9.0).color(egui::Color32::from_rgb(185, 207, 255)));
-                                ui.add(egui::Label::new(egui::RichText::new(val).size(18.0).strong().color(egui::Color32::WHITE)).wrap(false));
+                                ui.label(egui::RichText::new(val).size(18.0).strong().color(egui::Color32::WHITE));
                             });
                         });
                         ui.add_space(8.0);
