@@ -20,15 +20,13 @@ if ($tail -lt 0) { throw 'Element player hero local tail not found' }
 $end = $tail + $tailMarker.Length
 while ($end -lt $text.Length -and ($text[$end] -eq "`r" -or $text[$end] -eq "`n")) { $end++ }
 $newHero = @'
-    // Element v1.1 player hero: facepack auto-fallback + readable money cards.
+    // Element v1.2 player hero: Sortitoutsi face_<UID> resolver + iconface fallback.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
 
     let format_grouped_eur = |v: u32| -> String {
-        if v == 0 || v == u32::MAX {
-            return "—".into();
-        }
+        if v == 0 || v == u32::MAX { return "—".into(); }
         let raw = v.to_string();
         let mut grouped = String::with_capacity(raw.len() + raw.len() / 3);
         for (i, ch) in raw.chars().enumerate() {
@@ -43,22 +41,32 @@ $newHero = @'
             let millions = v as f64 / 1_000_000.0;
             if v % 1_000_000 == 0 { format!("€{millions:.0}M p/w") } else { format!("€{millions:.2}M p/w") }
         } else if v >= 1_000 {
-            let thousands = v as f64 / 1_000.0;
-            if v % 1_000 == 0 { format!("€{thousands:.0}K p/w") } else { format!("€{thousands:.0}K p/w") }
-        } else {
-            format!("€{v} p/w")
-        }
+            format!("€{:.0}K p/w", v as f64 / 1_000.0)
+        } else { format!("€{v} p/w") }
     };
-
     let asking = player.field_u32("p_asking_price").map(&format_grouped_eur).unwrap_or_else(|| "—".into());
     let wage = player.field_u32("p_contract_wage").map(&format_weekly_wage).unwrap_or_else(|| "—".into());
 
-    // Prefer the configured facepack. If none is configured, auto-detect the user's
-    // Sortitoutsi FM27 face folder shown by the standard Windows Documents layout.
-    let default_face_path = std::env::var("USERPROFILE").ok().map(|home| {
-        format!(r"{}\Documents\Sports Interactive\Football Manager 27\graphics\faces\sortitoutsi\faces", home)
+    let sortitoutsi_root = std::env::var("USERPROFILE").ok().map(|home| {
+        std::path::PathBuf::from(home)
+            .join("Documents").join("Sports Interactive").join("Football Manager 27")
+            .join("graphics").join("faces").join("sortitoutsi")
     });
-    let resolved_face_path = face_pack_path.map(|p| p.to_owned()).or(default_face_path);
+    let configured_root = face_pack_path.map(std::path::PathBuf::from);
+    let resolved_face_file = face_uid.and_then(|uid| {
+        let mut candidates: Vec<std::path::PathBuf> = Vec::new();
+        if let Some(root) = configured_root.as_ref() {
+            candidates.push(root.join(format!("face_{uid}.png")));
+            candidates.push(root.join(format!("{uid}.png")));
+            candidates.push(root.join("faces").join(format!("face_{uid}.png")));
+            candidates.push(root.join("iconfaces").join(format!("iconface_{uid}.png")));
+        }
+        if let Some(root) = sortitoutsi_root.as_ref() {
+            candidates.push(root.join("faces").join(format!("face_{uid}.png")));
+            candidates.push(root.join("iconfaces").join(format!("iconface_{uid}.png")));
+        }
+        candidates.into_iter().find(|p| p.exists())
+    });
 
     egui::Frame::none()
         .fill(egui::Color32::from_rgb(33, 96, 224))
@@ -67,16 +75,11 @@ $newHero = @'
         .show(ui, |ui| {
             ui.set_min_height(122.0);
             ui.horizontal(|ui| {
-                if let (Some(path), Some(uid)) = (resolved_face_path.as_deref(), face_uid) {
-                    let img_path = std::path::Path::new(path).join(format!("{uid}.png"));
-                    if img_path.exists() {
-                        let uri = format!("file:///{}", img_path.to_string_lossy().replace('\\', "/"));
-                        ui.add(egui::Image::new(uri).fit_to_exact_size(egui::vec2(92.0, 92.0)));
-                    } else {
-                        ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("NO FACE"); }); });
-                    }
+                if let Some(img_path) = resolved_face_file.as_ref() {
+                    let uri = format!("file:///{}", img_path.to_string_lossy().replace('\\', "/"));
+                    ui.add(egui::Image::new(uri).fit_to_exact_size(egui::vec2(92.0, 92.0)));
                 } else {
-                    ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("PLAYER"); }); });
+                    ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("NO FACE"); }); });
                 }
                 ui.add_space(12.0);
                 ui.vertical(|ui| {
@@ -109,8 +112,7 @@ $newHero = @'
 $text = $text.Substring(0,$start) + $newHero + $text.Substring($end)
 [IO.File]::WriteAllText((Join-Path $SourceRoot $p), $text, [Text.UTF8Encoding]::new($false))
 
-# Transfer UI remains guarded until the complete FM27 membership chain is validated.
 Replace-Required $p 'ui.add_enabled(false, egui::Button::new("Force Transfer — Experimental"));' 'ui.add_enabled(false, egui::Button::new("Force Transfer — validation required"));'
 Replace-Required $p 'LOCKED: full FM27 membership chain not verified yet — no partial pointer writes allowed.' 'VALIDATION GATE: destination team is mapped; squad/contract membership must pass live read-back before Force Transfer unlocks.'
 
-Write-Host 'Element v1.1 facepack + readable money hero applied.'
+Write-Host 'Element v1.2 Sortitoutsi face resolver + readable money hero applied.'
