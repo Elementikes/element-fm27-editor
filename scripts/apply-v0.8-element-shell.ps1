@@ -74,7 +74,7 @@ Replace-Required $p @'
             egui::Frame::group(col.style())
                 .fill(egui::Color32::from_rgb(26, 32, 48))
                 .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(42, 50, 69)))
-                .rounding(egui::Rounding::same(6.0))
+                .rounding(egui::Rounding::same(6))
                 .inner_margin(egui::Margin::symmetric(10, 8))
 '@
 
@@ -121,7 +121,7 @@ Replace-Required $c @'
     egui::Frame::group(ui.style())
         .fill(egui::Color32::from_rgb(26, 32, 48))
         .stroke(egui::Stroke::new(1.0, egui::Color32::from_rgb(42, 50, 69)))
-        .rounding(egui::Rounding::same(6.0))
+        .rounding(egui::Rounding::same(6))
         .inner_margin(egui::Margin::symmetric(12, 10))
 '@
 
