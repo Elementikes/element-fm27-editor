@@ -11,20 +11,28 @@ function Replace-Required {
     [IO.File]::WriteAllText($Path, $text, [Text.UTF8Encoding]::new($false))
 }
 
-# v0.8: move from a lightly themed upstream profile to a dense Element editor workspace.
-# Keep all proven FieldEdit/memory write mechanics unchanged.
+# v0.8 transforms the exact source produced by v0.2 -> v0.7.
 $p = 'src/ui/player_panel.rs'
 
-# Make the profile navigation read like a professional editor sidebar/section rail.
+# v0.5 already wrapped player navigation in a frame, so replace that exact frame.
 Replace-Required $p @'
-    ui.horizontal(|ui| {
-        ui.selectable_value(tab, PlayerTab::Overview, "Information");
-        ui.selectable_value(tab, PlayerTab::PositionsTraits, "Positions & Traits");
-        ui.selectable_value(tab, PlayerTab::Contract, "Contract");
-        ui.selectable_value(tab, PlayerTab::TransferLab, "Move to Club");
-    });
-    ui.separator();
+    // Element profile navigation: compact, high-contrast editor tabs.
+    egui::Frame::none()
+        .fill(egui::Color32::from_rgb(20, 25, 36))
+        .inner_margin(egui::Margin::symmetric(10, 8))
+        .show(ui, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                ui.selectable_value(tab, PlayerTab::Overview, "Information");
+                ui.selectable_value(tab, PlayerTab::PositionsTraits, "Positions & Traits");
+                if player.contract_raw.is_some() {
+                    ui.selectable_value(tab, PlayerTab::Contract, "Contract");
+                    ui.selectable_value(tab, PlayerTab::TransferLab, "Move to Club");
+                }
+            });
+        });
+    ui.add_space(6.0);
 '@ @'
+    // Element v0.8 document-style navigation strip.
     egui::Frame::none()
         .fill(egui::Color32::from_rgb(11, 14, 20))
         .inner_margin(egui::Margin::symmetric(10, 7))
@@ -33,14 +41,15 @@ Replace-Required $p @'
                 ui.spacing_mut().item_spacing.x = 4.0;
                 ui.selectable_value(tab, PlayerTab::Overview, "  Information  ");
                 ui.selectable_value(tab, PlayerTab::PositionsTraits, "  Positions & Traits  ");
-                ui.selectable_value(tab, PlayerTab::Contract, "  Contract  ");
-                ui.selectable_value(tab, PlayerTab::TransferLab, "  Move to Club  ");
+                if player.contract_raw.is_some() {
+                    ui.selectable_value(tab, PlayerTab::Contract, "  Contract  ");
+                    ui.selectable_value(tab, PlayerTab::TransferLab, "  Move to Club  ");
+                }
             });
         });
     ui.add_space(6.0);
 '@
 
-# Strengthen the information dashboard hierarchy.
 Replace-Required $p @'
     ui.label(egui::RichText::new("PLAYER ATTRIBUTES").size(14.0).strong().color(egui::Color32::from_rgb(116, 145, 255)));
 '@ @'
@@ -57,7 +66,6 @@ Replace-Required $p @'
         });
 '@
 
-# Cards: closer spacing, subtle border and professional dark panel surface.
 Replace-Required $p @'
             egui::Frame::group(col.style())
                 .fill(egui::Color32::from_rgb(18, 23, 33))
@@ -70,7 +78,6 @@ Replace-Required $p @'
                 .inner_margin(egui::Margin::symmetric(10, 8))
 '@
 
-# Quick actions become a right-looking toolbar strip rather than debug buttons.
 Replace-Required $p @'
             ui.horizontal_wrapped(|ui| {
                 ui.label(egui::RichText::new("QUICK ACTIONS").strong().color(egui::Color32::from_rgb(116, 145, 255)));
@@ -82,7 +89,7 @@ Replace-Required $p @'
 
 $c = 'src/ui/club_panel.rs'
 
-# Club document tabs get the same dark editor strip.
+# v0.7 changes only the club hero and overview card; upstream tab block remains intact.
 Replace-Required $c @'
     ui.horizontal(|ui| {
         ui.selectable_value(tab, ClubTab::Overview, "Overview");
@@ -106,7 +113,6 @@ Replace-Required $c @'
     ui.add_space(6.0);
 '@
 
-# Team development card matches the new panel language.
 Replace-Required $c @'
     egui::Frame::group(ui.style())
         .fill(egui::Color32::from_rgb(18, 23, 33))
