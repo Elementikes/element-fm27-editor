@@ -12,6 +12,7 @@ on:
       - 'scripts/apply-v0.6-shell.ps1'
       - 'scripts/apply-v0.7-element-ui.ps1'
       - 'scripts/apply-v0.8-element-shell.ps1'
+      - 'scripts/apply-v0.9-rebuild.ps1'
       - '.github/workflows/build-windows.yml'
 
 jobs:
@@ -72,6 +73,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v0.8-element-shell.ps1
 
+      - name: Apply Element v0.9 real application-shell rebuild
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v0.9-rebuild.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -92,6 +99,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v0.8
+          name: Element-FM27-Editor-Windows-x64-v0.9-UI-REBUILD
           path: dist/*
           if-no-files-found: error
