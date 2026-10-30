@@ -14,20 +14,51 @@ $p = 'src/ui/player_panel.rs'
 $text = [IO.File]::ReadAllText((Join-Path $SourceRoot $p))
 $start = $text.IndexOf('    // Element UI 2.0 hero.')
 if ($start -lt 0) { throw 'Element player hero start marker not found' }
-# The v0.7 hero owns this trailing spacing line. Use it as the local boundary instead of
-# depending on navigation/contract code that later UI layers are allowed to rewrite.
 $tailMarker = '    ui.add_space(8.0);'
 $tail = $text.IndexOf($tailMarker, $start)
 if ($tail -lt 0) { throw 'Element player hero local tail not found' }
 $end = $tail + $tailMarker.Length
 while ($end -lt $text.Length -and ($text[$end] -eq "`r" -or $text[$end] -eq "`n")) { $end++ }
 $newHero = @'
-    // Element v1.0 player hero: bounded horizontal layout; metric cards reserve enough width.
+    // Element v1.1 player hero: facepack auto-fallback + readable money cards.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
-    let value = player.field_u32("p_asking_price").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
-    let wage = player.field_u32("p_contract_wage").map(|v| format_wage(v, wage_period)).unwrap_or_else(|| "—".into());
+
+    let format_grouped_eur = |v: u32| -> String {
+        if v == 0 || v == u32::MAX {
+            return "—".into();
+        }
+        let raw = v.to_string();
+        let mut grouped = String::with_capacity(raw.len() + raw.len() / 3);
+        for (i, ch) in raw.chars().enumerate() {
+            if i > 0 && (raw.len() - i) % 3 == 0 { grouped.push('.'); }
+            grouped.push(ch);
+        }
+        format!("€{grouped}")
+    };
+    let format_weekly_wage = |v: u32| -> String {
+        if v == 0 || v == u32::MAX { return "—".into(); }
+        if v >= 1_000_000 {
+            let millions = v as f64 / 1_000_000.0;
+            if v % 1_000_000 == 0 { format!("€{millions:.0}M p/w") } else { format!("€{millions:.2}M p/w") }
+        } else if v >= 1_000 {
+            let thousands = v as f64 / 1_000.0;
+            if v % 1_000 == 0 { format!("€{thousands:.0}K p/w") } else { format!("€{thousands:.0}K p/w") }
+        } else {
+            format!("€{v} p/w")
+        }
+    };
+
+    let asking = player.field_u32("p_asking_price").map(&format_grouped_eur).unwrap_or_else(|| "—".into());
+    let wage = player.field_u32("p_contract_wage").map(&format_weekly_wage).unwrap_or_else(|| "—".into());
+
+    // Prefer the configured facepack. If none is configured, auto-detect the user's
+    // Sortitoutsi FM27 face folder shown by the standard Windows Documents layout.
+    let default_face_path = std::env::var("USERPROFILE").ok().map(|home| {
+        format!(r"{}\Documents\Sports Interactive\Football Manager 27\graphics\faces\sortitoutsi\faces", home)
+    });
+    let resolved_face_path = face_pack_path.map(|p| p.to_owned()).or(default_face_path);
 
     egui::Frame::none()
         .fill(egui::Color32::from_rgb(33, 96, 224))
@@ -36,10 +67,14 @@ $newHero = @'
         .show(ui, |ui| {
             ui.set_min_height(122.0);
             ui.horizontal(|ui| {
-                if let (Some(path), Some(uid)) = (face_pack_path, face_uid) {
+                if let (Some(path), Some(uid)) = (resolved_face_path.as_deref(), face_uid) {
                     let img_path = std::path::Path::new(path).join(format!("{uid}.png"));
-                    let uri = format!("file:///{}", img_path.to_string_lossy().replace('\\', "/"));
-                    ui.add(egui::Image::new(uri).fit_to_exact_size(egui::vec2(92.0, 92.0)));
+                    if img_path.exists() {
+                        let uri = format!("file:///{}", img_path.to_string_lossy().replace('\\', "/"));
+                        ui.add(egui::Image::new(uri).fit_to_exact_size(egui::vec2(92.0, 92.0)));
+                    } else {
+                        ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("NO FACE"); }); });
+                    }
                 } else {
                     ui.allocate_ui(egui::vec2(92.0, 92.0), |ui| { ui.centered_and_justified(|ui| { ui.label("PLAYER"); }); });
                 }
@@ -54,13 +89,13 @@ $newHero = @'
                     if let Some(uid) = face_uid { ui.label(egui::RichText::new(format!("UID {uid}")).small().color(egui::Color32::from_rgb(205, 220, 255))); }
                 });
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    for (label, val) in [("WAGE", wage.as_str()), ("ASKING", value.as_str()), ("PA", pa.as_str()), ("CA", ca.as_str())] {
+                    for (label, val) in [("WAGE", wage.as_str()), ("ASKING PRICE", asking.as_str()), ("PA", pa.as_str()), ("CA", ca.as_str())] {
                         egui::Frame::none().fill(egui::Color32::from_rgb(27, 76, 176)).inner_margin(egui::Margin::symmetric(14, 10)).show(ui, |ui| {
-                            ui.set_min_width(112.0);
-                            ui.set_max_width(150.0);
+                            ui.set_min_width(128.0);
+                            ui.set_max_width(175.0);
                             ui.vertical_centered(|ui| {
                                 ui.label(egui::RichText::new(label).size(9.0).color(egui::Color32::from_rgb(185, 207, 255)));
-                                ui.label(egui::RichText::new(val).size(18.0).strong().color(egui::Color32::WHITE));
+                                ui.label(egui::RichText::new(val).size(17.0).strong().color(egui::Color32::WHITE));
                             });
                         });
                         ui.add_space(8.0);
@@ -78,4 +113,4 @@ $text = $text.Substring(0,$start) + $newHero + $text.Substring($end)
 Replace-Required $p 'ui.add_enabled(false, egui::Button::new("Force Transfer — Experimental"));' 'ui.add_enabled(false, egui::Button::new("Force Transfer — validation required"));'
 Replace-Required $p 'LOCKED: full FM27 membership chain not verified yet — no partial pointer writes allowed.' 'VALIDATION GATE: destination team is mapped; squad/contract membership must pass live read-back before Force Transfer unlocks.'
 
-Write-Host 'Element v1.0 player hero + guarded transfer workspace applied.'
+Write-Host 'Element v1.1 facepack + readable money hero applied.'
