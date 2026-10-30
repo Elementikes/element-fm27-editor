@@ -15,17 +15,17 @@ $p = 'src/ui/player_panel.rs'
 # Fix the broken vertical wage presentation by replacing the v0.7 hero with a bounded,
 # horizontal FMRTE-inspired profile hero. Keep Element branding and original implementation.
 $text = [IO.File]::ReadAllText((Join-Path $SourceRoot $p))
-$start = $text.IndexOf('    // Element UI 2.0: player hero')
+$start = $text.IndexOf('    // Element UI 2.0 hero.')
+if ($start -lt 0) { throw 'Element player hero start marker not found' }
 $end = $text.IndexOf('    // Element profile navigation:', $start)
-if ($start -lt 0 -or $end -lt 0) { throw 'Element player hero markers not found' }
+if ($end -lt 0) { throw 'Element player hero end marker not found' }
 $newHero = @'
     // Element v1.0 player hero: bounded horizontal layout; metric values never wrap vertically.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let value = player.field_u32("p_value").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
-    let wage = player.contract_raw.as_ref()
-        .and_then(|raw| schemas.field("p_contract_wage").and_then(|f| fields::read_u32(raw, f.offset)))
+    let wage = player.field_u32("p_contract_wage")
         .map(|v| format_wage(v, wage_period)).unwrap_or_else(|| "—".into());
 
     egui::Frame::none()
