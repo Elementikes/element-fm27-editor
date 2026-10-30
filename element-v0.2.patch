@@ -1,0 +1,211 @@
+diff -ruN a/ELEMENT_ROADMAP.md b/ELEMENT_ROADMAP.md
+--- a/ELEMENT_ROADMAP.md	1970-01-01 00:00:00.000000000 +0000
++++ b/ELEMENT_ROADMAP.md	2026-10-30 19:25:33.000000000 +0000
+@@ -0,0 +1,19 @@
++# Element FM27 Editor roadmap
++
++## v0.2 implemented in source
++- Element FM27 branding and isolated settings directory.
++- Player Transfer Lab tab.
++- Editable FM27 mapped transfer-list and loan-list flags.
++- Editable asking price, contract wage and contract expiry in Transfer Lab.
++- Existing Club Finance editor retained: balance, transfer budget, spending wage budget; mapped totals shown.
++- Existing Staff Tactical Knowledge and Tactical Style editors retained.
++- Advanced transfer actions are deliberately locked until linked FM27 records are verified.
++
++## Next memory-research targets
++1. Interested-club / transfer-interest records (Attract Clubs).
++2. Future-transfer record creation: destination, fee, date, contract.
++3. Atomic Move Player Now across player/team/contract/squad registrations.
++4. Tactical familiarity / team cohesion / morale / condition/injuries.
++5. Mass Edit, Presets and Freezer.
++
++Always back up saves. Writes occur in the running FM process and can persist when FM saves.
+diff -ruN a/src/app.rs b/src/app.rs
+--- a/src/app.rs	2026-10-30 09:41:05.000000000 +0000
++++ b/src/app.rs	2026-10-30 19:25:29.000000000 +0000
+@@ -1762,8 +1762,8 @@
+ 
+ fn editor_title(build: Option<GameBuild>, branch: Option<&str>) -> String {
+     let base = build.map_or_else(
+-        || "FM Editor".to_string(),
+-        |v| format!("{} Editor", v.display_name()),
++        || "Element FM27 Editor".to_string(),
++        |v| format!("Element {} Editor", v.display_name()),
+     );
+     match branch.filter(|b| !b.is_empty()) {
+         Some(branch) => format!("{base} [{branch}]"),
+@@ -1777,17 +1777,17 @@
+ 
+     #[test]
+     fn attached_version_and_worktree_are_both_visible() {
+-        assert_eq!(editor_title(None, None), "FM Editor");
++        assert_eq!(editor_title(None, None), "Element FM27 Editor");
+         for version in GameBuild::ALL {
+             assert_eq!(
+                 editor_title(Some(version), None),
+-                format!("{} Editor", version.display_name())
++                format!("Element {} Editor", version.display_name())
+             );
+             assert_eq!(
+                 editor_title(Some(version), Some("preview")),
+-                format!("{} Editor [preview]", version.display_name())
++                format!("Element {} Editor [preview]", version.display_name())
+             );
+         }
+-        assert_eq!(editor_title(None, Some("preview")), "FM Editor [preview]");
++        assert_eq!(editor_title(None, Some("preview")), "Element FM27 Editor [preview]");
+     }
+ }
+diff -ruN a/src/main.rs b/src/main.rs
+--- a/src/main.rs	2026-10-30 09:41:05.000000000 +0000
++++ b/src/main.rs	2026-10-30 19:25:29.000000000 +0000
+@@ -64,8 +64,8 @@
+     };
+ 
+     let title = match branch.as_deref() {
+-        Some(b) => format!("FM Editor [{b}]"),
+-        None => "FM Editor".to_string(),
++        Some(b) => format!("Element FM27 Editor [{b}]"),
++        None => "Element FM27 Editor".to_string(),
+     };
+ 
+     let settings = AppSettings::load();
+@@ -77,7 +77,7 @@
+         ..Default::default()
+     };
+     eframe::run_native(
+-        "FM Editor",
++        "Element FM27 Editor",
+         options,
+         Box::new(move |cc| {
+             let app = FmEditorApp::new(cc).with_branch(branch);
+diff -ruN a/src/settings.rs b/src/settings.rs
+--- a/src/settings.rs	2026-10-30 09:41:05.000000000 +0000
++++ b/src/settings.rs	2026-10-30 19:25:29.000000000 +0000
+@@ -1,6 +1,6 @@
+ //! Persistent user preferences: theme, UI scale, wage display, and face packs.
+ //!
+-//! Stored at `%APPDATA%/fm-editor/settings.json` on Windows.
++//! Stored at `%APPDATA%/element-fm27-editor/settings.json` on Windows.
+ //! Falls back to defaults on missing or corrupt file.
+ 
+ use eframe::egui;
+@@ -165,7 +165,7 @@
+ }
+ 
+ fn settings_path() -> Option<std::path::PathBuf> {
+-    Some(dirs::config_dir()?.join("fm-editor").join("settings.json"))
++    Some(dirs::config_dir()?.join("element-fm27-editor").join("settings.json"))
+ }
+ 
+ // ─── Egui data key ────────────────────────────────────────────────────────────
+diff -ruN a/src/ui/player_panel.rs b/src/ui/player_panel.rs
+--- a/src/ui/player_panel.rs	2026-10-30 09:41:05.000000000 +0000
++++ b/src/ui/player_panel.rs	2026-10-30 19:25:29.000000000 +0000
+@@ -13,6 +13,7 @@
+     Overview,
+     PositionsTraits,
+     Contract,
++    TransferLab,
+ }
+ 
+ pub fn show(
+@@ -38,7 +39,7 @@
+         player.club_addr,
+         player.nationality.as_deref(),
+     );
+-    if *tab == PlayerTab::Contract && player.contract_raw.is_none() {
++    if matches!(*tab, PlayerTab::Contract | PlayerTab::TransferLab) && player.contract_raw.is_none() {
+         *tab = PlayerTab::Overview;
+     }
+ 
+@@ -48,6 +49,7 @@
+         ui.selectable_value(tab, PlayerTab::PositionsTraits, "Positions & Traits");
+         if player.contract_raw.is_some() {
+             ui.selectable_value(tab, PlayerTab::Contract, "Contract");
++            ui.selectable_value(tab, PlayerTab::TransferLab, "Transfer Lab");
+         }
+     });
+     ui.separator();
+@@ -64,6 +66,7 @@
+         ),
+         PlayerTab::PositionsTraits => show_positions_traits(schemas, ui, player, addr, &mut edits),
+         PlayerTab::Contract => show_contract(schemas, ui, player, &mut edits),
++        PlayerTab::TransferLab => show_transfer_lab(schemas, ui, player, &mut edits),
+     });
+ 
+     // Widgets address edits as `addr + schema offset`. A player-coach's person
+@@ -637,6 +640,72 @@
+     }
+ }
+ 
++
++
++// ---------------------------------------------------------------------------
++// Transfer Lab — Element FM27
++// ---------------------------------------------------------------------------
++
++fn show_transfer_lab(
++    schemas: &'static crate::fields::VersionedSchemas,
++    ui: &mut egui::Ui,
++    player: &mut PlayerRecord,
++    edits: &mut Vec<FieldEdit>,
++) {
++    ui.heading("Transfer Lab");
++    ui.label("Safe, mapped FM27 transfer controls. Advanced operations stay locked until their linked records are verified.");
++    ui.add_space(8.0);
++
++    if let (Some(cr), Some(caddr)) = (player.contract_raw.as_mut(), player.contract_addr) {
++        ui.strong("Market Status");
++        if let Some(f) = schemas.field("p_list_flags") {
++            let offset = f.offset.as_ref().map(|o| o.offset() as usize);
++            if let Some(offset) = offset.filter(|&o| o < cr.len()) {
++                let old = cr[offset];
++                let mut transfer = old & 1 != 0;
++                let mut loan = old & 2 != 0;
++                let enabled = crate::ui::navigation::editing_enabled(ui);
++                ui.add_enabled_ui(enabled, |ui| {
++                    ui.checkbox(&mut transfer, "Transfer Listed");
++                    ui.checkbox(&mut loan, "Loan Listed");
++                });
++                let new = (old & !0b11) | u8::from(transfer) | (u8::from(loan) << 1);
++                if enabled && new != old {
++                    cr[offset] = new;
++                    edits.push(FieldEdit {
++                        addr: caddr + offset as u64,
++                        old_raw: vec![old],
++                        new_raw: vec![new],
++                        description: format!("Transfer listing flags: {old:#04x} → {new:#04x}"),
++                    });
++                }
++            }
++        }
++        if let Some(f) = schemas.field("p_contract_wage") {
++            edits.extend(field_widget::raw_u32_edit(ui, &f, cr, caddr));
++        }
++        if let Some(f) = schemas.field("p_contract_expiry") {
++            edits.extend(field_widget::date_edit(ui, "Contract Expiry", cr, &f, caddr, 2000..=2060));
++        }
++    } else {
++        ui.label("Contract sub-record unavailable.");
++    }
++
++    if let Some(f) = schemas.field("p_asking_price") {
++        edits.extend(field_widget::optional_money_edit(ui, "Asking Price", &mut player.raw, &f, player.addr));
++    }
++
++    ui.add_space(12.0);
++    ui.separator();
++    ui.strong("Advanced Transfer Actions");
++    ui.label("These need multiple FM27 records to be updated atomically. They are intentionally disabled until the memory chains are verified on the current build.");
++    ui.horizontal_wrapped(|ui| {
++        ui.add_enabled(false, egui::Button::new("Attract Clubs"));
++        ui.add_enabled(false, egui::Button::new("Create Future Transfer"));
++        ui.add_enabled(false, egui::Button::new("Move Player Now"));
++    });
++}
++
+ /// Squad statuses offered for editing: one code per distinct label. Codes
+ /// 6, 8, 19 and 21 duplicate a label; 0 ("-"), 23 (Scouting Required) and
+ /// 24 (Out On Loan) are FM's own and not offered. A stored code outside
