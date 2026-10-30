@@ -11,22 +11,23 @@ function Replace-Required {
 }
 
 $p = 'src/ui/player_panel.rs'
-
-# Replace the complete existing Element player hero. The stable boundary after the hero is
-# the Contract-tab guard from upstream; later UI layers can freely rename/rebuild navigation.
 $text = [IO.File]::ReadAllText((Join-Path $SourceRoot $p))
 $start = $text.IndexOf('    // Element UI 2.0 hero.')
 if ($start -lt 0) { throw 'Element player hero start marker not found' }
-$end = $text.IndexOf('    if *tab == PlayerTab::Contract', $start)
-if ($end -lt 0) { throw 'Element player hero end boundary not found' }
+# The v0.7 hero owns this trailing spacing line. Use it as the local boundary instead of
+# depending on navigation/contract code that later UI layers are allowed to rewrite.
+$tailMarker = '    ui.add_space(8.0);'
+$tail = $text.IndexOf($tailMarker, $start)
+if ($tail -lt 0) { throw 'Element player hero local tail not found' }
+$end = $tail + $tailMarker.Length
+while ($end -lt $text.Length -and ($text[$end] -eq "`r" -or $text[$end] -eq "`n")) { $end++ }
 $newHero = @'
     // Element v1.0 player hero: bounded horizontal layout; metric values never wrap vertically.
     let face_uid = player.field_u32("p_uid").filter(|&uid| uid > 0);
     let ca = player.field_u8("p_ca").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
     let pa = player.field_u8("p_pa").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
-    let value = player.field_u32("p_value").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
-    let wage = player.field_u32("p_contract_wage")
-        .map(|v| format_wage(v, wage_period)).unwrap_or_else(|| "—".into());
+    let value = player.field_u32("p_asking_price").map(|v| v.to_string()).unwrap_or_else(|| "—".into());
+    let wage = player.field_u32("p_contract_wage").map(|v| format_wage(v, wage_period)).unwrap_or_else(|| "—".into());
 
     egui::Frame::none()
         .fill(egui::Color32::from_rgb(33, 96, 224))
@@ -48,13 +49,12 @@ $newHero = @'
                     ui.label(egui::RichText::new(player.name.as_deref().unwrap_or("Unknown")).size(25.0).strong().color(egui::Color32::WHITE));
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new(player.club_name.as_deref().unwrap_or("No club")).color(egui::Color32::WHITE));
-                        ui.label(egui::RichText::new("•").color(egui::Color32::WHITE));
-                        ui.label(egui::RichText::new(player.nationality.as_deref().unwrap_or("Unknown")).color(egui::Color32::WHITE));
+                        if let Some(nation) = player.nationality.as_deref() { ui.label(egui::RichText::new(format!(" • {nation}")).color(egui::Color32::WHITE)); }
                     });
                     if let Some(uid) = face_uid { ui.label(egui::RichText::new(format!("UID {uid}")).small().color(egui::Color32::from_rgb(205, 220, 255))); }
                 });
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    for (label, val) in [("WAGE", wage.as_str()), ("VALUE", value.as_str()), ("PA", pa.as_str()), ("CA", ca.as_str())] {
+                    for (label, val) in [("WAGE", wage.as_str()), ("ASKING", value.as_str()), ("PA", pa.as_str()), ("CA", ca.as_str())] {
                         egui::Frame::none().fill(egui::Color32::from_rgb(27, 76, 176)).inner_margin(egui::Margin::symmetric(14, 10)).show(ui, |ui| {
                             ui.set_min_width(112.0);
                             ui.vertical_centered(|ui| {
@@ -73,8 +73,7 @@ $newHero = @'
 $text = $text.Substring(0,$start) + $newHero + $text.Substring($end)
 [IO.File]::WriteAllText((Join-Path $SourceRoot $p), $text, [Text.UTF8Encoding]::new($false))
 
-# Upgrade transfer wording: real club selection/readback is the next guarded stage; do not claim
-# an unsafe one-pointer move is a complete transfer.
+# Transfer UI remains guarded until the complete FM27 membership chain is validated.
 Replace-Required $p 'ui.add_enabled(false, egui::Button::new("Force Transfer — Experimental"));' 'ui.add_enabled(false, egui::Button::new("Force Transfer — validation required"));'
 Replace-Required $p 'LOCKED: full FM27 membership chain not verified yet — no partial pointer writes allowed.' 'VALIDATION GATE: destination team is mapped; squad/contract membership must pass live read-back before Force Transfer unlocks.'
 
