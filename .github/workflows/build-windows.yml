@@ -6,13 +6,7 @@ on:
     branches: [ main ]
     paths:
       - 'element-v0.2.patch'
-      - 'scripts/apply-v0.3-ui.ps1'
-      - 'scripts/apply-v0.4-ui.ps1'
-      - 'scripts/apply-v0.5-ui.ps1'
-      - 'scripts/apply-v0.6-shell.ps1'
-      - 'scripts/apply-v0.7-element-ui.ps1'
-      - 'scripts/apply-v0.8-element-shell.ps1'
-      - 'scripts/apply-v0.9-rebuild.ps1'
+      - 'scripts/*.ps1'
       - '.github/workflows/build-windows.yml'
 
 jobs:
@@ -72,6 +66,12 @@ jobs:
         run: |
           cd source
           & ../element/scripts/apply-v0.8-element-shell.ps1
+
+      - name: Prepare existing branding for v0.9 transform
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/prepare-v0.9-main.ps1
 
       - name: Apply Element v0.9 real application-shell rebuild
         shell: pwsh
