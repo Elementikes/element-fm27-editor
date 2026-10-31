@@ -1,9 +1,9 @@
-name: Build Element v5.0 Windows
+name: Build Element v5.1 Windows
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, v5.1-native-offer-mapper ]
     paths:
       - 'element-v0.2.patch'
       - 'scripts/*.ps1'
@@ -12,7 +12,7 @@ on:
       - '.github/workflows/build-v4-windows.yml'
 
 jobs:
-  build-windows-v50:
+  build-windows-v51:
     runs-on: windows-latest
     steps:
       - name: Checkout Element patch repo
@@ -33,7 +33,7 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element current release stack through v5.0
+      - name: Apply Element current release stack through v5.1
         shell: pwsh
         run: |
           cd source
@@ -42,22 +42,22 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build v5.0 release
+      - name: Build v5.1 release
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v50.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v51.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v5.0 build diagnostics
+      - name: Upload v5.1 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v5.0-build-diagnostics
-          path: build-v50.log
+          name: v5.1-build-diagnostics
+          path: build-v51.log
           if-no-files-found: error
 
-      - name: Stage v5.0 executable
+      - name: Stage v5.1 executable
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -65,9 +65,9 @@ jobs:
           Copy-Item source/LICENSE dist/LICENSE
           Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
 
-      - name: Upload Element v5.0 Windows x64 artifact
+      - name: Upload Element v5.1 Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v5.0-FORCE-TRANSFER
+          name: Element-FM27-Editor-Windows-x64-v5.1-NATIVE-OFFER-MAPPER
           path: dist/*
           if-no-files-found: error
