@@ -163,6 +163,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v2.6-transfer-tactical-validation.ps1
 
+      - name: Apply Element v2.7 tactical knowledge engine core
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v2.7-tactical-engine-core.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -183,6 +189,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v2.6-TRANSFER-TACTICAL-VALIDATION
+          name: Element-FM27-Editor-Windows-x64-v2.7-TACTICAL-ENGINE-CORE
           path: dist/*
           if-no-files-found: error
