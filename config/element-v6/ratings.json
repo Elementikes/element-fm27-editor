@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "teamSelection": {
+    "positionAbility": 150,
+    "roleSuitability": 85,
+    "currentAbility": 120,
+    "potentialAbility": 75,
+    "fitness": 90,
+    "reputation": 25,
+    "morale": 20,
+    "injuryPenalty": 100,
+    "suspensionPenalty": 100
+  },
+  "roleProfiles": {
+    "Goalkeeper": {"key":["handling","reflexes","aerial_reach","command_of_area","communication","agility","concentration","positioning"],"secondary":["one_on_ones","kicking","throwing","decisions"]},
+    "Central Defender": {"key":["marking","tackling","heading","positioning","concentration","strength","jumping_reach","anticipation"],"secondary":["passing","composure","pace","bravery"]},
+    "Full Back": {"key":["tackling","positioning","pace","stamina","work_rate","crossing"],"secondary":["passing","anticipation","teamwork","acceleration"]},
+    "Defensive Midfielder": {"key":["tackling","positioning","anticipation","decisions","teamwork","stamina"],"secondary":["passing","first_touch","strength","work_rate"]},
+    "Playmaker": {"key":["passing","vision","first_touch","technique","decisions","composure"],"secondary":["flair","anticipation","teamwork","off_the_ball"]},
+    "Winger": {"key":["dribbling","pace","acceleration","crossing","off_the_ball","technique"],"secondary":["first_touch","flair","agility","finishing"]},
+    "Striker": {"key":["finishing","off_the_ball","composure","anticipation","first_touch"],"secondary":["pace","acceleration","heading","strength","technique"]}
+  },
+  "scoreScale": {"elite":90,"excellent":80,"good":70,"developing":55,"poor":0}
+}
