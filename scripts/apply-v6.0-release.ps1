@@ -56,4 +56,9 @@ if (-not (Test-Path -LiteralPath $V624)) { throw "Element v6.2.4 tactical max wo
 python $V624
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.4 tactical max workflow layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.4 Tactical Max Workflow successfully.'
+$V625 = Join-Path $RepoRoot 'layers/apply-v6.2.5-club-tactical-certifier-ui.py'
+if (-not (Test-Path -LiteralPath $V625)) { throw "Element v6.2.5 club tactical certifier UI layer missing: $V625" }
+python $V625
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.5 club tactical certifier UI layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.5 Club Tactical Certifier successfully.'
