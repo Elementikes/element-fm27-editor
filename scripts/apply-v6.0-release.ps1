@@ -66,4 +66,9 @@ if (-not (Test-Path -LiteralPath $V626)) { throw "Element v6.2.6 selected-club t
 python $V626
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6 selected-club tactical MAX layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.6 Selected Club Tactical MAX successfully.'
+$V6261 = Join-Path $RepoRoot 'layers/apply-v6.2.6.1-tactical-max-compile-hotfix.py'
+if (-not (Test-Path -LiteralPath $V6261)) { throw "Element v6.2.6.1 tactical MAX compile hotfix missing: $V6261" }
+python $V6261
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.1 tactical MAX compile hotfix failed.' }
+
+Write-Host 'Element release stack applied through v6.2.6.1 Tactical MAX compile hotfix successfully.'
