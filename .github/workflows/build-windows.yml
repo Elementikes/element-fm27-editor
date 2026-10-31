@@ -3,10 +3,14 @@ name: Build Element FM27 Editor Windows
 on:
   workflow_dispatch:
   push:
-    branches: [ main, element-v1-ui-transfer ]
+    branches: [ main ]
     paths:
       - 'element-v0.2.patch'
       - 'scripts/*.ps1'
+      - 'scripts/*.py'
+      - 'layers/*.py'
+      - 'patches/*.b64'
+      - 'config/element-v6/**'
       - '.github/workflows/build-windows.yml'
 
 jobs:
@@ -17,6 +21,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: element
+
+      - name: Validate Element v6 JSON configuration
+        shell: pwsh
+        run: |
+          python element/scripts/validate-v6-config.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Checkout upstream fm-editor
         uses: actions/checkout@v4
@@ -31,268 +41,44 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element v0.3 theme layer
+      - name: Apply Element release stack through v6.2.6.1
         shell: pwsh
         run: |
           cd source
-          & ../element/scripts/apply-v0.3-ui.ps1
-
-      - name: Apply Element v0.4 redesign layer
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.4-ui.ps1
-
-      - name: Apply Element v0.5 editor-style player UI
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.5-ui.ps1
-
-      - name: Apply Element v0.6 full-width editor shell
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.6-shell.ps1
-
-      - name: Apply Element v0.7 UI 2.0
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.7-element-ui.ps1
-
-      - name: Apply Element v0.8 dense editor shell
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.8-element-shell.ps1
-
-      - name: Prepare existing branding for v0.9 transform
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/prepare-v0.9-main.ps1
-
-      - name: Apply Element v0.9 real application-shell rebuild
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v0.9-rebuild.ps1
-
-      - name: Prepare v1.5 compatibility boundaries
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/prepare-v1.5-compat.ps1
-
-      - name: Apply Element v1.5 premium player workspace
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v1.0-ui-transfer.ps1
-
-      - name: Apply Element v1.6 compact player and club workspace
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v1.6-compact-club.ps1
-
-      - name: Apply Element v1.7 club finance transfer and tactical tools
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v1.7-fmrte-club-tools.ps1
-
-      - name: Apply Element v1.8 full club editor workspaces
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v1.8-full-club-editor.ps1
-
-      - name: Apply Element v1.9 full player editor and live session
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v1.9-full-player-live-session.ps1
-
-      - name: Apply Element v2.0 unified global search and compact player layout
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.0-global-search-compact-player.ps1
-
-      - name: Prepare v2.1 compatibility
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/prepare-v2.1-compat.ps1
-
-      - name: Apply Element v2.1 premium polish
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.1-premium-polish.ps1
-
-      - name: Apply Element v2.2 zero-scroll player density pass
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.2-zero-scroll-player.ps1
-
-      - name: Apply Element v2.3 player power tools and role presets
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.3-player-power-tools.ps1
-
-      - name: Apply Element v2.4 player presets and snapshot restore
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.4-player-presets.ps1
-
-      - name: Apply Element v2.5 staff and club power tools
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.5-staff-club-power-tools.ps1
-
-      - name: Apply Element v2.6 verified transfer and tactical validation
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.6-transfer-tactical-validation.ps1
-
-      - name: Apply Element v2.7 tactical knowledge engine core
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.7-tactical-engine-core.ps1
-
-      - name: Apply Element v2.8 tactical live inspector
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.8-tactical-live-inspector.ps1
-
-      - name: Prepare v2.8 compatibility
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/prepare-v2.8-compat.ps1
-
-      - name: Apply Element v2.9 tactical cross validator
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v2.9-tactical-cross-validator.ps1
-
-      - name: Apply Element v3.0 tactical probe dry-run lab
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.0-tactical-probe-lab.ps1
-
-      - name: Apply Element v3.1 tactical semantic mapper
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.1-tactical-semantic-mapper.ps1
-
-      - name: Apply Element v3.2 universal tactical resolver
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.2-universal-tactical-resolver.ps1
-
-      - name: Apply Element v3.3 universal descriptor resolver
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.3-universal-descriptor-resolver.ps1
-
-      - name: Apply Element v3.4 all clubs tactical certification
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.4-all-clubs-certification.ps1
-
-      - name: Apply Element v3.5 final tactical semantic certification
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.5-final-semantic-certification.ps1
-
-      - name: Prepare v3.6 Tactical Knowledge function boundary
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/prepare-v3.6-boundary.ps1
-
-      - name: Apply Element v3.6 viewer core
-        shell: pwsh
-        run: |
-          cd source
-          try {
-            & ../element/scripts/apply-v3.6-premium-tactical-viewer.ps1
-          } catch {
-            if ($_.Exception.Message -notlike '*Tactical Knowledge function boundary not found*') { throw }
-            Write-Host 'v3.6 core applied; legacy UI boundary failure handed to robust repair pass.'
-          }
-
-      - name: Apply Element v3.6 premium Tactical Knowledge UI repair
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.6-premium-ui-repair.ps1
-
-      - name: Apply Element v3.7 Tactical Knowledge intelligence
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.7-tactical-intelligence.ps1
-
-      - name: Apply Element v3.8 live club squads
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.8-live-club-squads.ps1
-
-      - name: Apply Element v3.8.1 MEN WOMEN Club Search filter
-        shell: pwsh
-        run: |
-          cd source
-          & ../element/scripts/apply-v3.8.1-club-gender-filter.ps1
+          & ../element/scripts/apply-v6.0-release.ps1
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build release
+      - name: Build current release
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v381.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-current.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v3.8.1 build diagnostics
+      - name: Upload build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v3.8.1-build-diagnostics
-          path: build-v381.log
+          name: v6.2.6.1-build-diagnostics
+          path: build-current.log
           if-no-files-found: error
 
-      - name: Stage executable
+      - name: Stage executable and v6 data
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Copy-Item source/target/release/fm-editor.exe dist/Element-FM27-Editor.exe
           Copy-Item source/LICENSE dist/LICENSE
-          Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
+          if (Test-Path source/ELEMENT_ROADMAP.md) { Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md }
+          New-Item -ItemType Directory -Force -Path dist/element-data | Out-Null
+          Copy-Item element/config/element-v6/*.json dist/element-data/
+          Copy-Item element/config/element-v6/README.md dist/element-data/README.md
 
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.8.1-CLUB-GENDER-FILTER
-          path: dist/*
+          name: Element-FM27-Editor-Windows-x64-v6.2.6.1-TACTICAL-MAX
+          path: dist/**
           if-no-files-found: error
