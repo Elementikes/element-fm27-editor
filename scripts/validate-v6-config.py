@@ -75,10 +75,25 @@ for i, row in enumerate(probes.get("targets", [])):
     if not row.get("fields"):
         errors.append(f"probe-targets.json {pid}: no fields")
 
+player_surface = load("player-surface.json")
+player_surface_ids = set()
+for i, row in enumerate(player_surface.get("sections", [])):
+    sid = row.get("id")
+    if not sid or sid in player_surface_ids:
+        errors.append(f"player-surface.json row {i}: missing/duplicate id {sid!r}")
+    player_surface_ids.add(sid)
+    if row.get("mode") not in allowed_status:
+        errors.append(f"player-surface.json {sid}: unsupported mode {row.get('mode')!r}")
+    if not row.get("fields"):
+        errors.append(f"player-surface.json {sid}: no fields")
+rel = player_surface.get("relationshipEditor", {})
+if not rel.get("columns") or not rel.get("actions"):
+    errors.append("player-surface.json relationshipEditor: columns/actions required")
+
 if errors:
     print("Element v6 config validation FAILED")
     for error in errors:
         print(" -", error)
     sys.exit(1)
 
-print(f"Element v6 config validation OK: {len(seen)} capabilities, {len(preset_ids)} presets, {len(ratings.get('roleProfiles', {}))} role profiles, {len(formations)} formations, {len(section_ids)} player sections, {len(probe_ids)} probe targets")
+print(f"Element v6 config validation OK: {len(seen)} capabilities, {len(preset_ids)} presets, {len(ratings.get('roleProfiles', {}))} role profiles, {len(formations)} formations, {len(section_ids)} semantic player sections, {len(player_surface_ids)} player surface sections, {len(probe_ids)} probe targets")
