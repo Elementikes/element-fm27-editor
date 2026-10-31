@@ -139,6 +139,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v2.2-zero-scroll-player.ps1
 
+      - name: Apply Element v2.3 player power tools and role presets
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v2.3-player-power-tools.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -159,6 +165,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v2.2-ZERO-SCROLL
+          name: Element-FM27-Editor-Windows-x64-v2.3-PLAYER-POWER-TOOLS
           path: dist/*
           if-no-files-found: error
