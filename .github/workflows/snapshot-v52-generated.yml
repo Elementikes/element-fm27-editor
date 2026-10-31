@@ -1,0 +1,40 @@
+name: Snapshot v5.2 generated source
+on:
+  workflow_dispatch:
+  push:
+    branches: [ v5.1-native-offer-mapper ]
+    paths:
+      - '.github/workflows/snapshot-v52-generated.yml'
+jobs:
+  snapshot:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { path: element }
+      - uses: actions/checkout@v4
+        with:
+          repository: barak14/fm-editor
+          ref: 3b41801958e874210ac884fd81222e9ea06c88b8
+          path: source
+      - shell: bash
+        run: |
+          cd source
+          git apply ../element/element-v0.2.patch
+      - shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-element-current.ps1
+      - shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path snapshot/src/ui | Out-Null
+          New-Item -ItemType Directory -Force -Path snapshot/src/bridge | Out-Null
+          Copy-Item source/src/ui/club_panel.rs snapshot/src/ui/club_panel.rs
+          Copy-Item source/src/ui/player_panel.rs snapshot/src/ui/player_panel.rs
+          Copy-Item source/src/app.rs snapshot/src/app.rs
+          Copy-Item source/src/cache.rs snapshot/src/cache.rs
+          Copy-Item source/src/bridge/cmd.rs snapshot/src/bridge/cmd.rs
+          Copy-Item source/src/bridge/worker.rs snapshot/src/bridge/worker.rs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Element-v5.1-generated-source
+          path: snapshot/**
