@@ -31,7 +31,7 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element current release stack through v4.2
+      - name: Apply Element current release stack through v4.2.1
         shell: pwsh
         run: |
           cd source
@@ -40,22 +40,22 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build v4.2 release
+      - name: Build v4.2.1 release
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v42.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v421.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v4.2 build diagnostics
+      - name: Upload v4.2.1 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v4.2-build-diagnostics
-          path: build-v42.log
+          name: v4.2.1-build-diagnostics
+          path: build-v421.log
           if-no-files-found: error
 
-      - name: Stage v4.2 executable
+      - name: Stage v4.2.1 executable
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -63,9 +63,9 @@ jobs:
           Copy-Item source/LICENSE dist/LICENSE
           Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
 
-      - name: Upload Element v4.2 Windows x64 artifact
+      - name: Upload Element v4.2.1 Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v4.2-PLAYER-INTELLIGENCE-SQUAD-ACTIONS
+          name: Element-FM27-Editor-Windows-x64-v4.2.1-INTELLIGENCE-ACCURACY
           path: dist/*
           if-no-files-found: error
