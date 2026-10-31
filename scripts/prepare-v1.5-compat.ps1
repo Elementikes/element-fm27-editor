@@ -53,3 +53,29 @@ if ($text.Contains($canonical)) {
 } else {
     throw 'v1.5 compatibility: neither the known v0.8 nor canonical v0.5 player navigation block was found.'
 }
+
+# v1.5 removes the blue banner by slicing from the banner marker to the
+# navigation-rail marker. In the v0.9-generated app.rs, the cache/filter
+# declarations live between those two markers, so that slice would also delete
+# schemas, filtered result vectors, wage_period and face_pack_path. Move that
+# declaration block immediately before the banner so the v1.5 slice removes
+# only presentation code and preserves the live app scope.
+$appPath = Join-Path $SourceRoot 'src/app.rs'
+$app = [IO.File]::ReadAllText($appPath)
+$bannerMarker = '        // ===== Element blue workspace banner ====='
+$declMarker = '        // Clone the Arc so we can borrow entity data inside egui closures'
+$railMarker = '        // ===== Element navigation rail ====='
+$bannerStart = $app.IndexOf($bannerMarker)
+$declStart = $app.IndexOf($declMarker, $bannerStart)
+$railStart = $app.IndexOf($railMarker, $declStart)
+if ($bannerStart -lt 0 -or $declStart -lt 0 -or $railStart -lt 0) {
+    throw 'v1.5 compatibility: could not locate banner/cache/rail boundaries in app.rs.'
+}
+if (-not ($bannerStart -lt $declStart -and $declStart -lt $railStart)) {
+    throw 'v1.5 compatibility: unexpected app.rs boundary ordering.'
+}
+$declarations = $app.Substring($declStart, $railStart - $declStart)
+$banner = $app.Substring($bannerStart, $declStart - $bannerStart)
+$app = $app.Substring(0, $bannerStart) + $declarations + $banner + $app.Substring($railStart)
+[IO.File]::WriteAllText($appPath, $app, [Text.UTF8Encoding]::new($false))
+Write-Host 'v1.5 compatibility: preserved cache/filter declarations outside banner-removal slice.'
