@@ -253,7 +253,16 @@ jobs:
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v36.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload v3.6 build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3.6-build-diagnostics
+          path: build-v36.log
+          if-no-files-found: error
 
       - name: Stage executable
         shell: pwsh
