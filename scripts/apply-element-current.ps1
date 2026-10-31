@@ -69,4 +69,9 @@ Invoke-Layer 'fix-v4.0-tactical-helper.ps1'
 Invoke-Layer 'apply-v4.1-contract-intelligence-premium.ps1'
 Invoke-Layer 'apply-v4.1.1-market-quick-filters.ps1'
 
-Write-Host 'Element CURRENT release stack applied through v4.1.1 successfully.'
+# v4.2 recruitment intelligence + safe squad bulk actions + live finance/PA tools.
+Invoke-Layer 'apply-v4.2a-player-intelligence.ps1'
+Invoke-Layer 'apply-v4.2b-squad-bulk-actions.ps1'
+Invoke-Layer 'apply-v4.2c-finance-potential.ps1'
+
+Write-Host 'Element CURRENT release stack applied through v4.2 successfully.'
