@@ -21,5 +21,12 @@ source = (
     + "# ---------- player_panel.rs ----------\n# Player UI is applied by apply-v5.0-player-ui.py\n\n"
     + source[end:]
 )
+
+# GitHub's Windows runner defaults Path.read_text() to the active ANSI code
+# page. Generated Rust files contain UTF-8 punctuation, so every v5 core
+# read/write must be explicit to avoid cp1252 decode failures before compile.
+source = source.replace("p.read_text()", 'p.read_text(encoding="utf-8")')
+source = source.replace("p.write_text(t)", 'p.write_text(t, encoding="utf-8")')
+
 layer.write_text(source, encoding="utf-8")
-print("v5.0 boundary prep completed: core transaction layer detached from Player UI patching.")
+print("v5.0 boundary prep completed: core detached from Player UI; UTF-8 source IO enforced.")
