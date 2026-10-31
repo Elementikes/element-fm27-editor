@@ -9,6 +9,7 @@ on:
       - 'scripts/*.ps1'
       - 'layers/*.py'
       - 'patches/*.b64'
+      - 'config/element-v6/**'
       - '.github/workflows/build-v4-windows.yml'
 
 jobs:
@@ -57,17 +58,20 @@ jobs:
           path: build-v60.log
           if-no-files-found: error
 
-      - name: Stage v6.0 executable
+      - name: Stage v6.0 executable and data
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Copy-Item source/target/release/fm-editor.exe dist/Element-FM27-Editor.exe
           Copy-Item source/LICENSE dist/LICENSE
           Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
+          New-Item -ItemType Directory -Force -Path dist/element-data | Out-Null
+          Copy-Item element/config/element-v6/*.json dist/element-data/
+          Copy-Item element/config/element-v6/README.md dist/element-data/README.md
 
       - name: Upload Element v6.0 Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v6.0-FMRTE-CERTIFICATION
-          path: dist/*
+          name: Element-FM27-Editor-Windows-x64-v6.0-OFFLINE-FOUNDATION
+          path: dist/**
           if-no-files-found: error
