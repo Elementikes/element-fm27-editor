@@ -74,5 +74,6 @@ Invoke-Layer 'apply-v4.2a-player-intelligence.ps1'
 Invoke-Layer 'apply-v4.2b-squad-bulk-actions.ps1'
 Invoke-Layer 'apply-v4.2c-finance-potential.ps1'
 Invoke-Layer 'apply-v4.2.1-intelligence-accuracy-hotfix.ps1'
+Invoke-Layer 'apply-v4.2.2-morale-ux.ps1'
 
-Write-Host 'Element CURRENT release stack applied through v4.2.1 successfully.'
+Write-Host 'Element CURRENT release stack applied through v4.2.2 successfully.'
