@@ -1,4 +1,4 @@
-name: Build Element v5.2 Windows
+name: Build Element v6.0 Windows
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       - '.github/workflows/build-v4-windows.yml'
 
 jobs:
-  build-windows-v52:
+  build-windows-v60:
     runs-on: windows-latest
     steps:
       - name: Checkout Element patch repo
@@ -33,31 +33,31 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element release stack through v5.2
+      - name: Apply Element release stack through v6.0
         shell: pwsh
         run: |
           cd source
-          & ../element/scripts/apply-v5.2-release.ps1
+          & ../element/scripts/apply-v6.0-release.ps1
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build v5.2 release
+      - name: Build v6.0 release
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v52.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v60.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v5.2 build diagnostics
+      - name: Upload v6.0 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v5.2-build-diagnostics
-          path: build-v52.log
+          name: v6.0-build-diagnostics
+          path: build-v60.log
           if-no-files-found: error
 
-      - name: Stage v5.2 executable
+      - name: Stage v6.0 executable
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -65,9 +65,9 @@ jobs:
           Copy-Item source/LICENSE dist/LICENSE
           Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
 
-      - name: Upload Element v5.2 Windows x64 artifact
+      - name: Upload Element v6.0 Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v5.2-TRANSFER-POWER
+          name: Element-FM27-Editor-Windows-x64-v6.0-FMRTE-CERTIFICATION
           path: dist/*
           if-no-files-found: error
