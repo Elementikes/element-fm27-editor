@@ -41,4 +41,9 @@ if (-not (Test-Path -LiteralPath $V621)) { throw "Element v6.2.1 FMRTE27 surface
 python $V621
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.1 FMRTE27 surface layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.1 FMRTE27 semantic surface successfully.'
+$V622 = Join-Path $RepoRoot 'layers/apply-v6.2.2-club-tactical-understanding.py'
+if (-not (Test-Path -LiteralPath $V622)) { throw "Element v6.2.2 club tactical understanding layer missing: $V622" }
+python $V622
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.2 club tactical understanding layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.2 Club Surface + Tactical Understanding successfully.'
