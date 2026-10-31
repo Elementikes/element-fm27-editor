@@ -68,7 +68,8 @@ Write-Text $playerPath $player
 $clubPath='src/ui/club_panel.rs'
 $club=Read-Text $clubPath
 $financeAnchor='fn show_finance('
-if(-not $club.Contains($financeAnchor)){throw 'v4.2c: show_finance anchor missing'}
+$financeStart=$club.IndexOf($financeAnchor)
+if($financeStart -lt 0){throw 'v4.2c: show_finance anchor missing'}
 $financeHelper=@'
 fn element_set_club_money(
     schemas: &'static crate::fields::VersionedSchemas,
@@ -95,25 +96,13 @@ fn element_set_club_money(
 }
 
 '@
-$club=$club.Replace($financeAnchor,$financeHelper+$financeAnchor)
+$club=$club.Substring(0,$financeStart)+$financeHelper+$club.Substring($financeStart)
+$financeStart=$club.IndexOf($financeAnchor)
+$open=$club.IndexOf(') {',$financeStart)
+if($open -lt 0){throw 'v4.2c: show_finance opening brace not found'}
+$insert=$open+3
+$premium=@'
 
-$financeBody=@'
-fn show_finance(
-    schemas: &'static crate::fields::VersionedSchemas,
-    ui: &mut egui::Ui,
-    club: &mut ClubView,
-    edits: &mut Vec<FieldEdit>,
-) {
-    ui.spacing_mut().item_spacing = egui::vec2(7.0, 4.0);
-'@
-$financePremium=@'
-fn show_finance(
-    schemas: &'static crate::fields::VersionedSchemas,
-    ui: &mut egui::Ui,
-    club: &mut ClubView,
-    edits: &mut Vec<FieldEdit>,
-) {
-    ui.spacing_mut().item_spacing = egui::vec2(7.0, 4.0);
     ui.horizontal(|ui| {
         ui.label(egui::RichText::new("FINANCE COMMAND CENTER").size(13.0).strong().color(egui::Color32::from_rgb(225,232,245)));
         ui.separator();
@@ -142,6 +131,6 @@ fn show_finance(
         });
     ui.add_space(5.0);
 '@
-$club=Replace-Required $club $financeBody $financePremium 'finance command center'
+$club=$club.Substring(0,$insert)+$premium+$club.Substring($insert)
 Write-Text $clubPath $club
 Write-Host 'Element v4.2c Editable Potential + Finance Command Center applied successfully.'
