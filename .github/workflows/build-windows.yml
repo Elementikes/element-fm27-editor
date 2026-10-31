@@ -223,6 +223,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.5-final-semantic-certification.ps1
 
+      - name: Prepare v3.6 Tactical Knowledge function boundary
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/prepare-v3.6-boundary.ps1
+
       - name: Apply Element v3.6 premium Tactical Knowledge viewer
         shell: pwsh
         run: |
