@@ -61,4 +61,9 @@ if (-not (Test-Path -LiteralPath $V625)) { throw "Element v6.2.5 club tactical c
 python $V625
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.5 club tactical certifier UI layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.5 Club Tactical Certifier successfully.'
+$V626 = Join-Path $RepoRoot 'layers/apply-v6.2.6-selected-club-tactical-max.py'
+if (-not (Test-Path -LiteralPath $V626)) { throw "Element v6.2.6 selected-club tactical MAX layer missing: $V626" }
+python $V626
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6 selected-club tactical MAX layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.6 Selected Club Tactical MAX successfully.'
