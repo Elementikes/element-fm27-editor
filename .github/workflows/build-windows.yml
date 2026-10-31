@@ -211,6 +211,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.3-universal-descriptor-resolver.ps1
 
+      - name: Apply Element v3.4 all clubs tactical certification
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.4-all-clubs-certification.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -231,6 +237,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.3-UNIVERSAL-DESCRIPTOR-RESOLVER
+          name: Element-FM27-Editor-Windows-x64-v3.4-ALL-CLUBS-CERTIFICATION
           path: dist/*
           if-no-files-found: error
