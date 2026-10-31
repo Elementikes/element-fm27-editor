@@ -205,4 +205,13 @@ $club = $club.Replace(
 )
 
 Write-Text $clubPath $club
-Write-Host 'Element v3.8.2 Squad Intelligence applied successfully.'
+
+# Continue with verified live morale. This remains read-side only; condition /
+# fitness / sharpness stay gated until their FM27 locations are certified.
+$moralePatch = Join-Path $PSScriptRoot 'apply-v3.8.3-squad-morale.ps1'
+if (-not (Test-Path -LiteralPath $moralePatch)) {
+    throw "v3.8.3 squad morale patch missing: $moralePatch"
+}
+& $moralePatch
+
+Write-Host 'Element v3.8.2 Squad Intelligence + v3.8.3 Squad Morale applied successfully.'
