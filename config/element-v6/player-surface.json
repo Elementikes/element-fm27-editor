@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "title": "Element v6.2.3 Player Full Surface",
+  "sections": [
+    {"id":"information","label":"Information","mode":"mapped","fields":["Name","DOB/Age","Nation","Club","Position","CA","PA","Reputation","Value","Wage"]},
+    {"id":"stats","label":"Stats / Data Hub","mode":"probe-ready","fields":["Appearances","Starts","Minutes","Goals","Assists","AverageRating","xG","xA","KeyPasses","Dribbles","PassCompletion","ProgressivePasses","TacklesWon","Interceptions","Aerials","Saves","xGPrevented","Percentiles","LeagueRank"]},
+    {"id":"comparison","label":"Comparison","mode":"mapped-derived","fields":["PlayerVsPlayer","PlayerVsLeague","PlayerVsPosition","AttributeRadar","PerformanceRadar","PercentileBars"]},
+    {"id":"contract","label":"Contract","mode":"partial","fields":["Club","StartDate","ExpiryDate","Wage","SquadStatus","Bonuses","Clauses","Happiness","PlayingTimeHappiness"]},
+    {"id":"career_plans","label":"Career Plans","mode":"probe-ready","fields":["PlanType","TargetClub","TargetNation","TargetCompetition","Status","Reason","StartDate","EndDate"]},
+    {"id":"swap_player","label":"Swap Player","mode":"mapped","fields":["SourcePlayer","TargetPlayer","IdentitySwapGuard"]},
+    {"id":"clone_center","label":"Clone Center","mode":"partial","fields":["Attributes","Positions","PreferredMoves","Personality","HiddenAttributes","Reputation"]},
+    {"id":"move_club","label":"Move to Club","mode":"certified","fields":["DestinationClub","DestinationTeam","RosterMembership","ContractOwnership"]},
+    {"id":"force_transfer","label":"Force Transfer Lab","mode":"certified-direct/probe-native","fields":["Seller","Buyer","Fee","DirectSettlement","TransferProposal","FutureTransfer"]},
+    {"id":"national_callup","label":"National Call Up","mode":"probe-ready","fields":["Nation","Squad","Status","CallUpDate"]},
+    {"id":"future_transfer","label":"Future Transfer","mode":"probe-ready","fields":["SellerTeam","BuyerTeam","Value","TransferDate","TransferType","FutureContract"]},
+    {"id":"injury","label":"Injury","mode":"probe-ready","fields":["IsInjured","InjuryType","StartDate","ExpectedReturn","Severity","Condition","MatchSharpness","Jadedness"]},
+    {"id":"work_permit","label":"Work Permit","mode":"probe-ready","fields":["HasPermit","PermitStatus","ApplicationDate","ExpiryDate","CannotApplyRelation"]},
+    {"id":"promises","label":"Promises","mode":"probe-ready","fields":["PromiseType","Target","Status","StartDate","Deadline","HappinessImpact"]},
+    {"id":"unavailability","label":"Unavailability / Bans","mode":"probe-ready","fields":["Reason","Competition","StartDate","EndDate","MatchesRemaining","IsBanned"]},
+    {"id":"transfer_proposals","label":"Transfer Proposals","mode":"probe-ready","fields":["BuyerTeam","SellerTeam","Value","TotalValue","Status","Type","TransferId","TransferTax","FutureContract"]},
+    {"id":"retirement","label":"Retire Date","mode":"probe-ready","fields":["RetireDate","InternationalRetirement","Reason"]},
+    {"id":"positions","label":"Positions","mode":"mapped","fields":["PositionRatings","BestPosition","SecondaryPositions"]},
+    {"id":"preferred_moves","label":"Preferred Moves","mode":"mapped","fields":["Moves","Add","Remove"]},
+    {"id":"relationships","label":"Relationships","mode":"mapped-read/probe-write","fields":["Type","Target","Value","Reason","UntilDate","Permanent","FormedAtPeriod","CompetitionRegistrationType","TrainedAtNation","IgnoringLoans","Add","Edit","Remove"]},
+    {"id":"languages","label":"Languages","mode":"probe-ready","fields":["Language","Speaking","Understanding","Fluency","Add","Edit","Remove"]},
+    {"id":"scout_info","label":"Scout Information","mode":"mapped-derived","fields":["RoleRatings","Strengths","Weaknesses","BestRole","PotentialBand","DealValue","SimilarPlayers"]},
+    {"id":"development","label":"Development & Growth","mode":"element-native","fields":["CAHistory","AttributeHistory","ValueHistory","WageHistory","GrowthRate","Snapshots"]}
+  ],
+  "relationshipEditor": {
+    "columns":["Type","Target","Period","Registration","Value","Reason","Actions"],
+    "actions":["Add","Edit","Remove"],
+    "reasonMapping":{"0x4E":"Player"}
+  },
+  "writePolicy": "Only mapped/certified fields are writable. Probe-ready controls remain disabled until runtime layout is cross-witnessed."
+}
