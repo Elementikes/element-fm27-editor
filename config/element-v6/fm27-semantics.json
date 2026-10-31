@@ -1,34 +1,62 @@
 {
-  "schemaVersion": 1,
-  "source": "FM27 semantic reference reconstructed from observed UI/object/property names; Element implementation is independent",
+  "schemaVersion": 2,
+  "source": "FM27 semantic reference reconstructed from observed FMRTE27 UI/object/property names and public FMRTE27 documentation; Element implementation is independent",
   "playerSections": [
     {"id":"information","label":"Information","status":"mapped"},
     {"id":"stats","label":"Stats / Data Hub","status":"probe-ready"},
     {"id":"comparison","label":"Comparison","status":"mapped"},
     {"id":"contract","label":"Contract","status":"partial"},
-    {"id":"career_plans","label":"Career Plans","status":"semantic-only"},
+    {"id":"career_plans","label":"Career Plans","status":"probe-ready"},
     {"id":"move_club","label":"Move to Club","status":"certified"},
+    {"id":"clone_center","label":"Clone Center","status":"partial"},
     {"id":"force_transfer","label":"Force Transfer Lab","status":"certified-direct/probe-native"},
-    {"id":"national_callup","label":"National Call Up","status":"semantic-only"},
+    {"id":"national_callup","label":"National Call Up","status":"probe-ready"},
     {"id":"future_transfer","label":"Future Transfer","status":"probe-ready"},
     {"id":"injury","label":"Injury","status":"probe-ready"},
-    {"id":"work_permit","label":"Work Permit","status":"semantic-only"},
-    {"id":"promises","label":"Promises","status":"semantic-only"},
+    {"id":"work_permit","label":"Work Permit","status":"probe-ready"},
+    {"id":"promises","label":"Promises","status":"probe-ready"},
     {"id":"unavailability","label":"Unavailability / Bans","status":"probe-ready"},
     {"id":"transfer_proposals","label":"Transfer Proposals","status":"probe-ready"},
-    {"id":"retirement","label":"Retirement","status":"semantic-only"},
+    {"id":"retirement","label":"Retirement","status":"probe-ready"},
     {"id":"positions","label":"Positions","status":"mapped"},
     {"id":"preferred_moves","label":"Preferred Moves","status":"mapped"},
-    {"id":"relationships","label":"Relationships","status":"probe-ready"},
-    {"id":"languages","label":"Languages","status":"semantic-only"},
-    {"id":"scout_info","label":"Scout Information","status":"semantic-only"},
-    {"id":"role_ratings","label":"Role Ratings","status":"mapped-derived"},
+    {"id":"relationships","label":"Relationships","status":"mapped-read/probe-write"},
+    {"id":"languages","label":"Languages","status":"probe-ready"},
+    {"id":"scout_info","label":"Scout Information / Role Ratings","status":"mapped-derived"},
     {"id":"development","label":"Development & Growth","status":"element-native"}
   ],
+  "clubSections": [
+    "Information","Squads","Finances","Club Vision","Possible Signings","Player Clauses","Transfer Center","Kits and Colours","Tactics","Staff","Affiliations","Regional Divisions","Ownership","Relationships","Tactical Understanding","Supporters","Stadium Move"
+  ],
+  "staffSections": [
+    "Information","Contract","Career Plans","Promises","Swap Staff","Training Rating","Formations/Tendencies","Relationships","Knowledge","Retire Date","Languages"
+  ],
+  "nationSections": [
+    "Information","National Teams","Squads","Kits and Colours","Tactics","Staff","Relationships","Transfer Preferences","Transfer Rules"
+  ],
+  "competitionSections": [
+    "Information","Standings","Prize Money","Rules","Fixtures","Squad Registration Rules"
+  ],
+  "relationshipTypes": [
+    "LikesPerson","DislikesPerson","LikesTeam","DislikesTeam","OtherNationality","OtherNationCaps","OtherNationYouthCaps","FormedAtClub","FormedAtCountry","DevelopedAtCountry","CompetitionRegistration","CompetitionUnregistration","InternationalRetirement","InternationalWithdrawal","InvitedToRepresentNation","Rival","RivalNation","SettledStatus","CannotApplyForWorkPermit","PlayedUEFAGame","GamesPlayedInDivisionLevel"
+  ],
+  "relationshipReasons": [
+    "NoReason","BackroomStaff","Chairman","Child","Competitive","Founder","Friend","Historic","Idol","Local","Owner","Parent","PlayerAndManager","Relation","Sibling","Supporter","Teammate","YouthStaff"
+  ],
+  "registrationTypes": [
+    "AfricanSquad","AllStar","AsianAfcCupSquad","AsianAseanClubChampSquad","AsianChampionsLeagueSquad","AsianPresidentCupSquad","AustralianALeagueSquad","AvailableForFirstTeamAndBClub","AvailableForFirstTeamOnly","BrazilianStateLeague","CustomCompetition","DomesticCup","DomesticCup2","DomesticCup3","DomesticCup4","DomesticCup5","DomesticCup6","DomesticCup7","DomesticCup8","DomesticCup9","DomesticCup19","DomesticDivision","DomesticOtherDivision","EuropeanSouthamericanChallenge","EuropeanSquad","EuropeanUnder19Squad","FifaWorldClubCup","LibertadoresCupSquad","LockedAllStarSquad","MexicanFirstLeague","MlsSquad","NamChampionsLeagueSquad","NationalTeam","OceaniaClubChampionshipSquad","OldClubWorldChampionship","PeruvianTorneoDelIncaSquad","SamRecopaSquad","SquadSelectionDeadlineDates","SudamericanSquad","TrainingCamp","TreatedAsNonForeign","Under20LibertadoresCupSquad","Under20YouthSuperCup","WmnAfrChampionsLeagueSquad","WmnAsiChampionsLeagueSquad","WmnEurChampionsLeagueSquad","WmnEurEuropaLeagueSquad","WmnNamChampionsCupSquad","WmnSamCopaLibertadoresSquad"
+  ],
+  "statsSurface": {
+    "scopes": ["AllCompetitions","League","Cup","Continental","International","NonCompetitive","WholeSeason"],
+    "comparisonPools": ["OwnLeague","TopLeagues","Everyone","Defenders","Midfielders","Forwards","Goalkeepers"],
+    "positionGroups": ["Goalkeeper","CentreBack","FullBack","DefensiveMidfielder","CentralMidfielder","AttackingMidfielder","Winger","Striker"],
+    "profiles": ["GoalThreat","Scoring","Creating","Dribbling","PassingAndCreating","ProgressivePassing","PassCompletion","Defending","DefensiveActivity","Physical","DuelsAndBallSecurity","AerialSuccess","BallSecurity","Distribution","ShotStopping","GoalsPrevented","HandlingAndErrors","DisciplineAndErrors"],
+    "metrics": ["Appearances","Starts","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","NonPenaltyExpectedGoals","NonPenaltyExpectedGoalsPerShot","NonPenaltyGoals","GoalsAboveExpectedGoals","KeyPasses","OpenPlayKeyPasses","ClearCutChancesCreated","Shots","Dribbles","PassesAttempted","PassCompletion","ProgressivePasses","TacklesWon","TacklesWonRatio","Interceptions","PossessionWon","PossessionLost","PressuresCompleted","HeadersWon","HeadersWonRatio","Blocks","Clearances","FoulsMade","FoulsAgainst","MistakesLeadingToGoals","DistanceCovered","GoalsConceded","CleanSheetsPercentage","Saves","SaveRatio","SavesHeldPercentage","PenaltiesSavedRatio","ExpectedGoalsPrevented"]
+  },
   "entities": {
     "TransferProposal": ["BuyerTeam","SellerTeam","Value","TotalValue","Status","Type","HasFutureContract","FutureContract","TransferId","TransferTax"],
     "FutureTransfer": ["SellerTeam","BuyerTeam","Value","TransferDate","TransferType","FutureContract"],
-    "PlayerRelation": ["SelectedType","ObjectName","Value","SelectedFormedAtPeriod","SelectedCompetitionRegistrationType","SelectedTrainedAtNation"],
-    "PlayerStats": ["Appearances","Starts","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","ExpectedGoalsOverperformance","ExpectedGoalsPrevented","GoalsAboveXG","KeyPasses","Interceptions","AerialAbility"]
+    "PlayerRelation": ["SelectedType","ObjectName","Value","UntilDate","Permanent","SelectedFormedAtPeriod","SelectedCompetitionRegistrationType","SelectedTrainedAtNation","IgnoringLoans"],
+    "PlayerStats": ["Appearances","Starts","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","ExpectedGoalsPrevented","GoalsAboveExpectedGoals","KeyPasses","Interceptions","Dribbles","ProgressivePasses","PassCompletion","TacklesWon","HeadersWon","PossessionWon","PossessionLost"]
   }
 }
