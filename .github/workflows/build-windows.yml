@@ -187,6 +187,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v2.9-tactical-cross-validator.ps1
 
+      - name: Apply Element v3.0 tactical probe dry-run lab
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.0-tactical-probe-lab.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -207,6 +213,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v2.9-TACTICAL-CROSS-VALIDATOR
+          name: Element-FM27-Editor-Windows-x64-v3.0-TACTICAL-PROBE-DRY-RUN
           path: dist/*
           if-no-files-found: error
