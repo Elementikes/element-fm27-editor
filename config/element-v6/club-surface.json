@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "source": "Observed FMRTE27 club surface; Element implementation is independent",
+  "tabs": [
+    {"id":"information","label":"Information","status":"mapped"},
+    {"id":"squads","label":"Squads","status":"mapped"},
+    {"id":"finances","label":"Finances","status":"mapped"},
+    {"id":"club_vision","label":"Club Vision","status":"probe-ready"},
+    {"id":"possible_signings","label":"Possible Signings","status":"probe-ready"},
+    {"id":"player_clauses","label":"Player Clauses","status":"probe-ready"},
+    {"id":"transfer_center","label":"Transfer Center","status":"partial"},
+    {"id":"kits_colours","label":"Kits and Colours","status":"probe-ready"},
+    {"id":"tactics","label":"Tactics","status":"mapped"},
+    {"id":"staff","label":"Staff","status":"mapped"},
+    {"id":"affiliations","label":"Affiliations","status":"probe-ready"},
+    {"id":"regional_divisions","label":"Regional Divisions","status":"probe-ready"},
+    {"id":"ownership","label":"Ownership","status":"probe-ready"},
+    {"id":"relationships","label":"Relationships","status":"probe-ready"},
+    {"id":"tactical_understanding","label":"Tactical Understanding","status":"probe-ready"},
+    {"id":"supporters","label":"Supporters","status":"probe-ready"}
+  ]
+}
