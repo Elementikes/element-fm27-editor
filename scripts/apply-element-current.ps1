@@ -76,7 +76,6 @@ if (-not (Test-Path -LiteralPath $FinalPatcher)) { throw "Element v4.7 patcher m
 python $FinalPatcher
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.7 generated patch failed.' }
 
-# Pinned-upstream compile compatibility for v4.7.
 $CompileFix = Join-Path $RepoRoot 'layers/fix-v4.7-compile.py'
 if (-not (Test-Path -LiteralPath $CompileFix)) { throw "Element v4.7 compile fix missing: $CompileFix" }
 python $CompileFix
@@ -88,17 +87,21 @@ if (-not (Test-Path -LiteralPath $V48Overlay)) { throw "Element v4.8 overlay app
 python $V48Overlay
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 source overlay failed.' }
 
-# v4.8 pinned-source compile compatibility.
 $V48CompileFix = Join-Path $RepoRoot 'layers/fix-v4.8-compile.py'
 if (-not (Test-Path -LiteralPath $V48CompileFix)) { throw "Element v4.8 compile fix missing: $V48CompileFix" }
 python $V48CompileFix
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 compile compatibility pass failed.' }
 
 # v4.8.1 stability: never recursively scan huge graphics packs from egui render.
-# Missing crest lookups are fast and negatively cached for the current session.
 $V481Stability = Join-Path $RepoRoot 'layers/fix-v4.8.1-stability.py'
 if (-not (Test-Path -LiteralPath $V481Stability)) { throw "Element v4.8.1 stability hotfix missing: $V481Stability" }
 python $V481Stability
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8.1 stability hotfix failed.' }
 
-Write-Host 'Element CURRENT release stack applied through v4.8.1 successfully.'
+# v4.9 public-source mapping consolidation.
+$V49 = Join-Path $RepoRoot 'layers/apply-v4.9-consolidation.py'
+if (-not (Test-Path -LiteralPath $V49)) { throw "Element v4.9 consolidator missing: $V49" }
+python $V49
+if ($LASTEXITCODE -ne 0) { throw 'Element v4.9 mapping consolidation failed.' }
+
+Write-Host 'Element CURRENT release stack applied through v4.9 successfully.'
