@@ -175,6 +175,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v2.8-tactical-live-inspector.ps1
 
+      - name: Prepare v2.8 compatibility
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/prepare-v2.8-compat.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
