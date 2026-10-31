@@ -51,4 +51,9 @@ if (-not (Test-Path -LiteralPath $V623)) { throw "Element v6.2.3 player full sur
 python $V623
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.3 player full surface layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.3 Player Full Surface successfully.'
+$V624 = Join-Path $RepoRoot 'layers/apply-v6.2.4-tactical-ui.py'
+if (-not (Test-Path -LiteralPath $V624)) { throw "Element v6.2.4 tactical max workflow layer missing: $V624" }
+python $V624
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.4 tactical max workflow layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.4 Tactical Max Workflow successfully.'
