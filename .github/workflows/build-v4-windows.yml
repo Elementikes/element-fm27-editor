@@ -1,4 +1,4 @@
-name: Build Element v4.8 Windows
+name: Build Element v4.8.1 Windows
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       - '.github/workflows/build-v4-windows.yml'
 
 jobs:
-  build-windows-v48:
+  build-windows-v481:
     runs-on: windows-latest
     steps:
       - name: Checkout Element patch repo
@@ -33,7 +33,7 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element current release stack through v4.8
+      - name: Apply Element current release stack through v4.8.1
         shell: pwsh
         run: |
           cd source
@@ -42,22 +42,22 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build v4.8 release
+      - name: Build v4.8.1 release
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v48.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v481.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v4.8 build diagnostics
+      - name: Upload v4.8.1 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v4.8-build-diagnostics
-          path: build-v48.log
+          name: v4.8.1-build-diagnostics
+          path: build-v481.log
           if-no-files-found: error
 
-      - name: Stage v4.8 executable
+      - name: Stage v4.8.1 executable
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -65,9 +65,9 @@ jobs:
           Copy-Item source/LICENSE dist/LICENSE
           Copy-Item source/ELEMENT_ROADMAP.md dist/ELEMENT_ROADMAP.md
 
-      - name: Upload Element v4.8 Windows x64 artifact
+      - name: Upload Element v4.8.1 Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v4.8-PLAYER-SQUAD-COMPLETION
+          name: Element-FM27-Editor-Windows-x64-v4.8.1-STABILITY-HOTFIX
           path: dist/*
           if-no-files-found: error
