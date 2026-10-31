@@ -122,4 +122,11 @@ if (-not (Test-Path -LiteralPath $V50Ui)) { throw "Element v5.0 Player UI layer 
 python $V50Ui
 if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 Player Transfer UI layer failed.' }
 
-Write-Host 'Element CURRENT release stack applied through v5.0 successfully.'
+# v5.1 read-only native-offer / Transfer Proposal mapper. This deliberately
+# does not synthesize an offer until FM's own proposal record is witnessed.
+$V51 = Join-Path $RepoRoot 'layers/apply-v5.1-native-offer-mapper.py'
+if (-not (Test-Path -LiteralPath $V51)) { throw "Element v5.1 Native Offer Mapper layer missing: $V51" }
+python $V51
+if ($LASTEXITCODE -ne 0) { throw 'Element v5.1 Native Offer Mapper layer failed.' }
+
+Write-Host 'Element CURRENT release stack applied through v5.1 successfully.'
