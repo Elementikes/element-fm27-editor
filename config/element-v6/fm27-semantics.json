@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "source": "FM27 semantic reference reconstructed from observed UI/object/property names; Element implementation is independent",
+  "playerSections": [
+    {"id":"information","label":"Information","status":"mapped"},
+    {"id":"stats","label":"Stats / Data Hub","status":"probe-ready"},
+    {"id":"comparison","label":"Comparison","status":"mapped"},
+    {"id":"contract","label":"Contract","status":"partial"},
+    {"id":"career_plans","label":"Career Plans","status":"semantic-only"},
+    {"id":"move_club","label":"Move to Club","status":"certified"},
+    {"id":"force_transfer","label":"Force Transfer Lab","status":"certified-direct/probe-native"},
+    {"id":"national_callup","label":"National Call Up","status":"semantic-only"},
+    {"id":"future_transfer","label":"Future Transfer","status":"probe-ready"},
+    {"id":"injury","label":"Injury","status":"probe-ready"},
+    {"id":"work_permit","label":"Work Permit","status":"semantic-only"},
+    {"id":"promises","label":"Promises","status":"semantic-only"},
+    {"id":"unavailability","label":"Unavailability / Bans","status":"probe-ready"},
+    {"id":"transfer_proposals","label":"Transfer Proposals","status":"probe-ready"},
+    {"id":"retirement","label":"Retirement","status":"semantic-only"},
+    {"id":"positions","label":"Positions","status":"mapped"},
+    {"id":"preferred_moves","label":"Preferred Moves","status":"mapped"},
+    {"id":"relationships","label":"Relationships","status":"probe-ready"},
+    {"id":"languages","label":"Languages","status":"semantic-only"},
+    {"id":"scout_info","label":"Scout Information","status":"semantic-only"},
+    {"id":"role_ratings","label":"Role Ratings","status":"mapped-derived"},
+    {"id":"development","label":"Development & Growth","status":"element-native"}
+  ],
+  "entities": {
+    "TransferProposal": ["BuyerTeam","SellerTeam","Value","TotalValue","Status","Type","HasFutureContract","FutureContract","TransferId","TransferTax"],
+    "FutureTransfer": ["SellerTeam","BuyerTeam","Value","TransferDate","TransferType","FutureContract"],
+    "PlayerRelation": ["SelectedType","ObjectName","Value","SelectedFormedAtPeriod","SelectedCompetitionRegistrationType","SelectedTrainedAtNation"],
+    "PlayerStats": ["Appearances","Starts","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","ExpectedGoalsOverperformance","ExpectedGoalsPrevented","GoalsAboveXG","KeyPasses","Interceptions","AerialAbility"]
+  }
+}
