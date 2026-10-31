@@ -67,5 +67,6 @@ Invoke-Layer 'apply-v4.0-transfer-center-live.ps1'
 # Tactical Knowledge; restore the v2.7 pointer guard if that helper was sliced.
 Invoke-Layer 'fix-v4.0-tactical-helper.ps1'
 Invoke-Layer 'apply-v4.1-contract-intelligence-premium.ps1'
+Invoke-Layer 'apply-v4.1.1-market-quick-filters.ps1'
 
-Write-Host 'Element CURRENT release stack applied through v4.1 successfully.'
+Write-Host 'Element CURRENT release stack applied through v4.1.1 successfully.'
