@@ -33,8 +33,8 @@ $panel = 'src/ui/club_panel.rs'
 $ui = Read-Text $panel
 $start = $ui.IndexOf('fn show_tactical_understanding(ui: &mut egui::Ui, club: &ClubView) {')
 if ($start -lt 0) { throw 'v3.6 repair: show_tactical_understanding start not found' }
-$end = $ui.IndexOf('fn show_stadium(', $start)
-if ($end -lt 0 -or $end -le $start) { throw 'v3.6 repair: show_stadium boundary not found' }
+$end = $ui.IndexOf('fn show_squads(', $start)
+if ($end -lt 0 -or $end -le $start) { throw 'v3.6 repair: show_squads boundary not found' }
 
 $replacement = @'
 fn show_tactical_understanding(ui: &mut egui::Ui, club: &ClubView) {
