@@ -19,18 +19,10 @@ function Replace-Required([string]$Text, [string]$Old, [string]$New, [string]$La
 
 # -----------------------------------------------------------------------------
 # Element v3.8.2 — SQUAD INTELLIGENCE
-#
-# Read-side only. Promote two already-certified FM27 contract fields into the
-# live club roster cache:
-#   p_contract_wage -> contract + schema offset (FM27 validated at +0x20)
-#   p_squad_status  -> contract + schema offset (FM27 validated at +0x54)
-#
-# No new offsets are guessed here: offsets are read from the active schema.
-# Condition / morale remain gated. B/U19 classification remains gated until a
-# team-type discriminator is independently certified.
+# Read-side only. Promote already-certified FM27 contract fields into the live
+# club roster cache. No new offsets are guessed here.
 # -----------------------------------------------------------------------------
 
-# ======================== CACHE CONTRACT SUMMARY ==============================
 $cachePath = 'src/cache.rs'
 $cache = Read-Text $cachePath
 $cache = Replace-Required $cache @'
@@ -94,7 +86,6 @@ $newMembership = @'
 $bulk = Replace-Required $bulk $oldMembership $newMembership 'membership loop contract cache'
 Write-Text $bulkPath $bulk
 
-# ======================== PREMIUM SQUAD UI ====================================
 $clubPath = 'src/ui/club_panel.rs'
 $club = Read-Text $clubPath
 
@@ -150,13 +141,12 @@ $club = Replace-Required $club @'
             egui::RichText::new("v3.8.2 • SQUAD INTELLIGENCE")
 '@ 'squad intelligence version badge'
 
-$club = Replace-Required $club @'
-        ui.label(
-            egui::RichText::new("Real player membership from the verified FM27 player → team → club chain. Click any player name to open the Player Editor.")
-'@ @'
-        ui.label(
-            egui::RichText::new("Live membership + verified contract wage + squad status. Click any player name to open the Player Editor.")
-'@ 'squad intelligence subtitle'
+# Subtitle wording changed during earlier premium UI passes, so this polish is
+# intentionally best-effort instead of a build-blocking source boundary.
+$club = $club.Replace(
+    'Real player membership from the verified FM27 player → team → club chain. Click any player name to open the Player Editor.',
+    'Live membership + verified contract wage + squad status. Click any player name to open the Player Editor.'
+)
 
 $club = Replace-Required $club @'
             .selected_text(match sort { 0 => "Name", 1 => "Position", 2 => "Age", 3 => "CA", _ => "PA" })
@@ -208,11 +198,11 @@ $club = Replace-Required $club @'
                             }
 '@ 'live squad status and wage cells'
 
-$club = Replace-Required $club @'
-        ui.label(egui::RichText::new("No squad membership writes • no transfer writes • Force Transfer remains locked").size(8.0).color(egui::Color32::from_rgb(139, 157, 188)));
-'@ @'
-        ui.label(egui::RichText::new("Verified contract read-side • no squad writes • no transfer writes • Force Transfer remains locked").size(8.0).color(egui::Color32::from_rgb(139, 157, 188)));
-'@ 'squad intelligence safety footer'
+# Footer wording is cosmetic and may differ after premium UI passes.
+$club = $club.Replace(
+    'No squad membership writes • no transfer writes • Force Transfer remains locked',
+    'Verified contract read-side • no squad writes • no transfer writes • Force Transfer remains locked'
+)
 
 Write-Text $clubPath $club
 Write-Host 'Element v3.8.2 Squad Intelligence applied successfully.'
