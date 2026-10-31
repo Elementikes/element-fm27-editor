@@ -39,18 +39,23 @@ jobs:
           New-Item -ItemType Directory -Force -Path snapshot/src/fields/fm27 | Out-Null
           Copy-Item source/src/ui/club_panel.rs snapshot/src/ui/club_panel.rs
           Copy-Item source/src/ui/player_panel.rs snapshot/src/ui/player_panel.rs
+          Copy-Item source/src/ui/navigation.rs snapshot/src/ui/navigation.rs
           Copy-Item source/src/ui/pages/player_search.rs snapshot/src/ui/pages/player_search.rs
+          Copy-Item source/src/ui/pages/club_search.rs snapshot/src/ui/pages/club_search.rs
           Copy-Item source/src/app.rs snapshot/src/app.rs
           Copy-Item source/src/cache.rs snapshot/src/cache.rs
+          Copy-Item source/src/settings.rs snapshot/src/settings.rs
           Copy-Item source/src/player.rs snapshot/src/player.rs
           Copy-Item source/src/bridge/bulk_load.rs snapshot/src/bridge/bulk_load.rs
           Copy-Item source/src/bridge/cmd.rs snapshot/src/bridge/cmd.rs
           Copy-Item source/src/bridge/worker.rs snapshot/src/bridge/worker.rs
+          Copy-Item source/src/bridge/entity_load.rs snapshot/src/bridge/entity_load.rs
+          Copy-Item source/src/fields/mod.rs snapshot/src/fields/mod.rs
           Copy-Item source/src/fields/fm27/player.rs snapshot/src/fields/fm27/player.rs
           Copy-Item source/Cargo.toml snapshot/Cargo.toml
       - name: Upload generated source snapshot
         uses: actions/upload-artifact@v4
         with:
-          name: Element-generated-source-v4.2.2
+          name: Element-generated-source-v4.2.2-expanded
           path: snapshot/**
           if-no-files-found: error
