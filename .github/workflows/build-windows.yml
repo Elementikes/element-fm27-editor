@@ -103,6 +103,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v1.7-fmrte-club-tools.ps1
 
+      - name: Apply Element v1.8 full club editor workspaces
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v1.8-full-club-editor.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -123,6 +129,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v1.7-CLUB-TOOLS
+          name: Element-FM27-Editor-Windows-x64-v1.8-FULL-CLUB
           path: dist/*
           if-no-files-found: error
