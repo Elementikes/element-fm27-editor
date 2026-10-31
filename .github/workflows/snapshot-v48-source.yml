@@ -1,0 +1,42 @@
+name: Snapshot Element v4.7 generated source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/snapshot-v48-source.yml'
+
+jobs:
+  snapshot:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Element patch repo
+        uses: actions/checkout@v4
+        with:
+          path: element
+      - name: Checkout upstream fm-editor
+        uses: actions/checkout@v4
+        with:
+          repository: barak14/fm-editor
+          ref: 3b41801958e874210ac884fd81222e9ea06c88b8
+          path: source
+      - name: Apply proven Element v0.2 patch
+        shell: bash
+        run: |
+          cd source
+          git apply ../element/element-v0.2.patch
+      - name: Apply Element current stack
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-element-current.ps1
+      - name: Upload generated source
+        uses: actions/upload-artifact@v4
+        with:
+          name: Element-v4.7-generated-source
+          path: |
+            source/src/**
+            source/Cargo.toml
+            source/Cargo.lock
+          if-no-files-found: error
