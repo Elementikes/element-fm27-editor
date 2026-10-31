@@ -121,6 +121,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v2.0-global-search-compact-player.ps1
 
+      - name: Prepare v2.1 compatibility
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/prepare-v2.1-compat.ps1
+
       - name: Apply Element v2.1 premium polish
         shell: pwsh
         run: |
