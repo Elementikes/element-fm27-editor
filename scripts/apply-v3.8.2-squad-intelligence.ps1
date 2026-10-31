@@ -214,4 +214,11 @@ if (-not (Test-Path -LiteralPath $moralePatch)) {
 }
 & $moralePatch
 
-Write-Host 'Element v3.8.2 Squad Intelligence + v3.8.3 Squad Morale applied successfully.'
+# Continue with the certified FM27 staff employer + contract job chain.
+$staffPatch = Join-Path $PSScriptRoot 'apply-v3.9-live-club-staff.ps1'
+if (-not (Test-Path -LiteralPath $staffPatch)) {
+    throw "v3.9 live club staff patch missing: $staffPatch"
+}
+& $staffPatch
+
+Write-Host 'Element v3.8.2 Squad Intelligence + v3.8.3 Squad Morale + v3.9 Club Staff Live applied successfully.'
