@@ -73,9 +73,17 @@ Invoke-Layer 'apply-v4.2.2-morale-ux.ps1'
 # sticky Squad Actions + club crests; verified bulk Heal/Lift Bans; exact live
 # contract windows; Deal Score v2; Force Transfer validation lab; dynamics /
 # eligibility research gates; smart squad audit; final Recruitment Board.
-$FinalPatcher = Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'layers/apply-v4.7-final.py'
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$FinalPatcher = Join-Path $RepoRoot 'layers/apply-v4.7-final.py'
 if (-not (Test-Path -LiteralPath $FinalPatcher)) { throw "Element v4.7 patcher missing: $FinalPatcher" }
 python $FinalPatcher
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.7 generated patch failed.' }
+
+# Compatibility pass for the pinned upstream revision used by the Windows
+# release workflow. This does not alter any certified FM27 address/mapping.
+$CompileFix = Join-Path $RepoRoot 'layers/fix-v4.7-compile.py'
+if (-not (Test-Path -LiteralPath $CompileFix)) { throw "Element v4.7 compile fix missing: $CompileFix" }
+python $CompileFix
+if ($LASTEXITCODE -ne 0) { throw 'Element v4.7 compile compatibility pass failed.' }
 
 Write-Host 'Element CURRENT release stack applied through v4.7 successfully.'
