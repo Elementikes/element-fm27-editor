@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "formations": [
+    {"name":"4-2-3-1","positions":["GK","DL","DCL","DCR","DR","DMCL","DMCR","AML","AMC","AMR","ST"]},
+    {"name":"4-3-3 DM","positions":["GK","DL","DCL","DCR","DR","DM","MCL","MCR","AML","AMR","ST"]},
+    {"name":"4-4-2","positions":["GK","DL","DCL","DCR","DR","ML","MCL","MCR","MR","STL","STR"]},
+    {"name":"3-4-2-1","positions":["GK","DCL","DC","DCR","WBL","MCL","MCR","WBR","AML","AMR","ST"]},
+    {"name":"3-5-2","positions":["GK","DCL","DC","DCR","WBL","MCL","MC","MCR","WBR","STL","STR"]}
+  ],
+  "notes":"Element-owned neutral formation definitions. No third-party graphics or proprietary implementation code included."
+}
