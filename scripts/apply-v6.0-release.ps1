@@ -46,4 +46,9 @@ if (-not (Test-Path -LiteralPath $V622)) { throw "Element v6.2.2 club tactical u
 python $V622
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.2 club tactical understanding layer failed.' }
 
-Write-Host 'Element release stack applied through v6.2.2 Club Surface + Tactical Understanding successfully.'
+$V623 = Join-Path $RepoRoot 'layers/apply-v6.2.3-player-full-surface.py'
+if (-not (Test-Path -LiteralPath $V623)) { throw "Element v6.2.3 player full surface layer missing: $V623" }
+python $V623
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.3 player full surface layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.3 Player Full Surface successfully.'
