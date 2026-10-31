@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "source": "Observed FMRTE27 Tactical Understanding surface; Element implementation is independent",
+  "squadScopes": ["First Team", "U19", "B Team"],
+  "groups": [
+    {
+      "id":"in_possession",
+      "label":"In Possession",
+      "metrics":[
+        {"id":"passing_style","label":"Passing Style","status":"probe-ready","scale":"0..100"},
+        {"id":"build_up","label":"Build Up","status":"probe-ready","scale":"0..100"},
+        {"id":"chance_creation","label":"Chance Creation","status":"probe-ready","scale":"0..100"}
+      ]
+    },
+    {
+      "id":"out_of_possession",
+      "label":"Out of Possession",
+      "metrics":[
+        {"id":"line_of_engagement","label":"Line of Engagement","status":"probe-ready","scale":"0..100"},
+        {"id":"pressing_intensity","label":"Pressing Intensity","status":"probe-ready","scale":"0..100"},
+        {"id":"pressing_trap","label":"Pressing Trap","status":"probe-ready","scale":"0..100"}
+      ]
+    },
+    {
+      "id":"role_position",
+      "label":"Position / Role",
+      "metrics":[
+        {"id":"position_role","label":"Position/Role","status":"probe-ready","scale":"0..100"}
+      ]
+    }
+  ],
+  "ui": {
+    "showBars": true,
+    "showNumericValues": true,
+    "showSquadTabs": true,
+    "showDeveloperRawKeys": true,
+    "developerRawKeysOnly": true
+  }
+}
