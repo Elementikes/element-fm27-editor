@@ -3,7 +3,7 @@ name: Build Element v5.2 Windows
 on:
   workflow_dispatch:
   push:
-    branches: [ v5.1-native-offer-mapper ]
+    branches: [ main ]
     paths:
       - 'element-v0.2.patch'
       - 'scripts/*.ps1'
