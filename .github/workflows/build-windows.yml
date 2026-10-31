@@ -217,6 +217,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.4-all-clubs-certification.ps1
 
+      - name: Apply Element v3.5 final tactical semantic certification
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.5-final-semantic-certification.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -237,6 +243,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.4-ALL-CLUBS-CERTIFICATION
+          name: Element-FM27-Editor-Windows-x64-v3.5-FINAL-SEMANTIC-CERTIFICATION
           path: dist/*
           if-no-files-found: error
