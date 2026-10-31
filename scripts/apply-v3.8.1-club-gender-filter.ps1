@@ -19,13 +19,7 @@ function Replace-Required([string]$Text, [string]$Old, [string]$New, [string]$La
 
 # -----------------------------------------------------------------------------
 # Element v3.8.1 — MEN / WOMEN CLUB FILTER
-#
-# FM27 club gender is already certified in the cache: 0 = men, 1 = women.
-# Replace the legacy one-way "Female" checkbox with two explicit independent
-# visibility toggles. Both are enabled by default, so existing search behavior
-# remains unchanged until the user filters by gender.
 # -----------------------------------------------------------------------------
-
 $path = 'src/ui/pages/club_search.rs'
 $ui = Read-Text $path
 
@@ -65,8 +59,6 @@ $newFilter = @'
                 0 if !state.men => return false,
                 1 if !state.women => return false,
                 0 | 1 => {}
-                // FM27's certified gender field is binary. Hide unexpected
-                // values rather than silently assigning them to either team.
                 _ => return false,
             }
 '@
@@ -181,13 +173,20 @@ $ui = Replace-Required $ui $testAnchor $newGenderTest 'independent gender test i
 
 Write-Text $path $ui
 
-# v2.0 removed the local club filter row from the rendered UI. Apply the
-# visibility hotfix after the state/filter changes so MEN/WOMEN are surfaced
-# beside the persistent global search whenever Clubs is the active page.
+# v2.0 removed the local club filter row from the rendered UI. Surface the
+# gender toggles beside the persistent global search whenever Clubs is active.
 $globalPatch = Join-Path $PSScriptRoot 'apply-v3.8.2-global-club-gender-filter.ps1'
 if (-not (Test-Path -LiteralPath $globalPatch)) {
     throw "v3.8.1 hotfix: global gender patch missing: $globalPatch"
 }
 & $globalPatch
 
-Write-Host 'Element v3.8.1 MEN / WOMEN Club Search filter + top-bar visibility hotfix applied successfully.'
+# Continue with the next read-side squad intelligence layer. Keeping this call
+# chained here means the existing CI pipeline automatically exercises v3.8.2.
+$squadPatch = Join-Path $PSScriptRoot 'apply-v3.8.2-squad-intelligence.ps1'
+if (-not (Test-Path -LiteralPath $squadPatch)) {
+    throw "v3.8.2 squad intelligence patch missing: $squadPatch"
+}
+& $squadPatch
+
+Write-Host 'Element v3.8.1 gender filter + v3.8.2 Squad Intelligence applied successfully.'
