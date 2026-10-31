@@ -252,6 +252,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.7-tactical-intelligence.ps1
 
+      - name: Apply Element v3.8 live club squads
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.8-live-club-squads.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -259,15 +265,15 @@ jobs:
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v37.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v38.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v3.7 build diagnostics
+      - name: Upload v3.8 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v3.7-build-diagnostics
-          path: build-v37.log
+          name: v3.8-build-diagnostics
+          path: build-v38.log
           if-no-files-found: error
 
       - name: Stage executable
@@ -281,6 +287,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.7-TACTICAL-INTELLIGENCE
+          name: Element-FM27-Editor-Windows-x64-v3.8-LIVE-CLUB-SQUADS
           path: dist/*
           if-no-files-found: error
