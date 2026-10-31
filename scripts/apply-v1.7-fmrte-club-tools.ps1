@@ -244,6 +244,6 @@ $text = $text.Substring(0, $financeStart) + $newFinance + $text.Substring($stadi
 # Make the priority club pages live in the contextual left rail.
 $a = 'src/app.rs'
 Replace-Required $a '                    ui.add_enabled(false, egui::Button::new("⇆  Transfer Center"));' '                    if nav(ui, self.club_tab == club_panel::ClubTab::TransferCenter, "⇆  Transfer Center") { self.club_tab = club_panel::ClubTab::TransferCenter; }'
-Replace-Required $a '                    ui.add_enabled(false, egui::Button::new("◉  Tactical Understanding"));' '                    if nav(ui, self.club_tab == club_panel::ClubTab::TacticalUnderstanding, "◉  Tactical Understanding") { self.club_tab = club_panel::ClubTab::TacticalUnderstanding; }'
+Replace-Required $a '                    ui.add_enabled(false, egui::Button::new("⚙  Tactical Understanding"));' '                    if nav(ui, self.club_tab == club_panel::ClubTab::TacticalUnderstanding, "⚙  Tactical Understanding") { self.club_tab = club_panel::ClubTab::TacticalUnderstanding; }'
 
 Write-Host 'Element v1.7 FMRTE-inspired finance, transfer center and tactical-understanding workspaces applied successfully.'
