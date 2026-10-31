@@ -180,4 +180,14 @@ $newGenderTest = @'
 $ui = Replace-Required $ui $testAnchor $newGenderTest 'independent gender test insertion'
 
 Write-Text $path $ui
-Write-Host 'Element v3.8.1 MEN / WOMEN Club Search filter applied successfully.'
+
+# v2.0 removed the local club filter row from the rendered UI. Apply the
+# visibility hotfix after the state/filter changes so MEN/WOMEN are surfaced
+# beside the persistent global search whenever Clubs is the active page.
+$globalPatch = Join-Path $PSScriptRoot 'apply-v3.8.2-global-club-gender-filter.ps1'
+if (-not (Test-Path -LiteralPath $globalPatch)) {
+    throw "v3.8.1 hotfix: global gender patch missing: $globalPatch"
+}
+& $globalPatch
+
+Write-Host 'Element v3.8.1 MEN / WOMEN Club Search filter + top-bar visibility hotfix applied successfully.'
