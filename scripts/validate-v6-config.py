@@ -53,7 +53,7 @@ for i, formation in enumerate(formations):
 
 sem = load("fm27-semantics.json")
 section_ids = set()
-allowed_status = {"mapped","probe-ready","partial","semantic-only","certified","certified-direct/probe-native","mapped-derived","element-native"}
+allowed_status = {"mapped","probe-ready","partial","semantic-only","certified","certified-direct/probe-native","mapped-derived","element-native","mapped-read/probe-write"}
 for i, row in enumerate(sem.get("playerSections", [])):
     sid = row.get("id")
     if not sid or sid in section_ids:
