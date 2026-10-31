@@ -104,7 +104,12 @@ if (-not (Test-Path -LiteralPath $V49)) { throw "Element v4.9 consolidator missi
 python $V49
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.9 mapping consolidation failed.' }
 
-# v5.0: guarded live Force Transfer, Sell/Offer Magnet and compact Squads.
+# v5.0 boundary normalization + guarded live Force Transfer / Sell Assist / Squads.
+$V50Prep = Join-Path $RepoRoot 'layers/prepare-v5.0-boundaries.py'
+if (-not (Test-Path -LiteralPath $V50Prep)) { throw "Element v5.0 boundary prep missing: $V50Prep" }
+python $V50Prep
+if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 boundary prep failed.' }
+
 $V50 = Join-Path $RepoRoot 'layers/apply-v5.0-force-transfer.py'
 if (-not (Test-Path -LiteralPath $V50)) { throw "Element v5.0 layer missing: $V50" }
 python $V50
