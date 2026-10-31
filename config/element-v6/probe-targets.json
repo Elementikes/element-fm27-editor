@@ -1,14 +1,26 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "targets": [
-    {"id":"fitness","label":"Fitness","fields":["Condition","MatchSharpness","Jadedness","IsInjured"],"notes":"Known target scales include Condition/Sharpness 0..10000."},
+    {"id":"fitness","label":"Fitness","fields":["Condition","MatchSharpness","Jadedness","IsInjured"],"notes":"Known FM27 semantic targets; Condition/Sharpness target scale reaches 10000."},
     {"id":"happiness","label":"Happiness","fields":["Morale","Contract.Happiness","Contract.PlayingTimeHappiness","Contract.NumberOfUnhappinessMotives"],"notes":"Change one observable state only before compare."},
-    {"id":"transfer_proposal","label":"Transfer Proposal","fields":["BuyerTeam","SellerTeam","Value","Status","Type","FutureContract"],"notes":"Best witness: one offer added or removed."},
-    {"id":"future_transfer","label":"Future Transfer","fields":["BuyerTeam","SellerTeam","Value","TransferDate","TransferType"],"notes":"Use before/after confirmed transfer agreement."},
-    {"id":"registration","label":"Registration / Homegrown","fields":["SelectedCompetitionRegistrationType","SelectedFormedAtPeriod","SelectedTrainedAtNation"],"notes":"Change one registration relation only."},
-    {"id":"stats","label":"Match Stats / Data Hub","fields":["Appearances","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","KeyPasses","Interceptions"],"notes":"Capture before and after one completed match."},
-    {"id":"relationships","label":"Relationships","fields":["SelectedType","ObjectName","Value"],"notes":"Add or change exactly one relationship."},
-    {"id":"availability","label":"Bans / Unavailability","fields":["IsBanned"],"notes":"Use a single known ban state change."},
-    {"id":"retirement","label":"Retirement","fields":["HasInternationalRetirement","RetireDate"],"notes":"Use a known retirement state change."}
+    {"id":"transfer_proposal","label":"Transfer Proposal","fields":["BuyerTeam","SellerTeam","Value","TotalValue","Status","Type","FutureContract","TransferId","TransferTax"],"notes":"Best witness: one offer added or removed while the player and clubs stay unchanged."},
+    {"id":"future_transfer","label":"Future Transfer","fields":["BuyerTeam","SellerTeam","Value","TransferDate","TransferType","FutureContract"],"notes":"Use before/after confirmed transfer agreement."},
+    {"id":"relationship_edit","label":"Relationship • edit existing","fields":["SelectedType","ObjectName","Value","Reason","UntilDate","Permanent"],"notes":"Element already reads existing club ties. Change only strength/reason on one existing relation for first write witness."},
+    {"id":"relationship_insert","label":"Relationship • add/remove","fields":["SelectedType","TargetObject","Value","Reason"],"notes":"Add exactly one LikesTeam/LikesPerson relation, capture, then remove the same row to identify vector allocation and deletion semantics."},
+    {"id":"registration","label":"Registration / Homegrown","fields":["SelectedCompetitionRegistrationType","SelectedFormedAtPeriod","SelectedTrainedAtNation","IgnoringLoans"],"notes":"Change one registration or formed-at relation only."},
+    {"id":"nationality_relation","label":"Other Nationality","fields":["OtherNationality","Permanent","Value"],"notes":"Add/remove one secondary nationality relation."},
+    {"id":"work_permit","label":"Work Permit","fields":["CannotApplyForWorkPermit","Permanent","UntilDate","Registration"],"notes":"Use one conditional/permanent permit change and avoid changing contract or club simultaneously."},
+    {"id":"promises","label":"Promises","fields":["PromiseType","Status","StartDate","EndDate","Person","Club"],"notes":"Add/edit/remove one promise only; object/vector mapping expected."},
+    {"id":"career_plans","label":"Career Plans","fields":["Condition","Job","ItemType","Scope","TargetObject"],"notes":"Edit one existing plan first; insertion can follow after row layout is certified."},
+    {"id":"stats","label":"Match Stats / Data Hub","fields":["Appearances","Starts","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","NonPenaltyExpectedGoals","GoalsAboveExpectedGoals","KeyPasses","Dribbles","ProgressivePasses","TacklesWon","Interceptions","HeadersWon","ExpectedGoalsPrevented"],"notes":"Capture before and after one completed match; use a player who actually records touches/actions."},
+    {"id":"availability","label":"Bans / Unavailability","fields":["IsBanned","StartDate","EndDate","Reason","Competition"],"notes":"Use a single known ban/unavailability state change."},
+    {"id":"injury","label":"Injury Record","fields":["IsInjured","InjuryType","StartDate","EndDate","Severity"],"notes":"Prefer an existing minor injury; edit one date/severity field before testing insertion/removal."},
+    {"id":"retirement","label":"Retirement","fields":["HasInternationalRetirement","RetireDate","StartDate"],"notes":"Use a known retirement state change."},
+    {"id":"languages","label":"Languages","fields":["Language","Proficiency","Fluency"],"notes":"Edit one existing language value, then add/remove one language row."},
+    {"id":"knowledge","label":"Staff Knowledge","fields":["CountryOrRegion","Value"],"notes":"Edit one existing staff knowledge entry first."},
+    {"id":"club_clause","label":"Player Clauses","fields":["Player","Type","Value","Percentage","Trigger","Competition"],"notes":"Club-side clause rows are a separate object family; map one existing clause before creating one."},
+    {"id":"club_affiliation","label":"Club Affiliations","fields":["ParentClub","FeederClub","StartDate","EndDate","AnnualFee","Benefits"],"notes":"Edit one existing affiliation field only."},
+    {"id":"club_ownership","label":"Club Ownership","fields":["ElectionDate","Term","TurnoutLimits","Promises"],"notes":"Only for clubs with an ownership record."},
+    {"id":"stadium_move","label":"Stadium Move","fields":["TargetStadium","MoveDate","ExpectedAttendance","Likelihood"],"notes":"Only for clubs with an existing planned move."}
   ]
 }
