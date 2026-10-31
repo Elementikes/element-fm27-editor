@@ -27,9 +27,13 @@ if logo_actual != logo_expected:
     raise SystemExit(f"v4.9 club-logo checksum mismatch: {logo_actual}")
 Path("src/ui/club_logo.rs").write_bytes(logo)
 
-clarity = repo / "layers" / "apply-v4.9.1-recruitment-clarity.py"
-if not clarity.is_file():
-    raise SystemExit(f"v4.9.1 recruitment clarity layer missing: {clarity}")
-subprocess.run(["python", str(clarity)], check=True)
+for layer_name in [
+    "apply-v4.9.1-recruitment-clarity.py",
+    "apply-v4.9.2-deal-presets.py",
+]:
+    layer = repo / "layers" / layer_name
+    if not layer.is_file():
+        raise SystemExit(f"release layer missing: {layer}")
+    subprocess.run(["python", str(layer)], check=True)
 
-print("Element v4.9.1 mapping consolidation + recruitment clarity + async crest indexer applied successfully.")
+print("Element v4.9.2 mapping consolidation + recruitment clarity + calibrated deal presets + async crest indexer applied successfully.")
