@@ -16,4 +16,9 @@ if (-not (Test-Path -LiteralPath $V60)) { throw "Element v6.0 certification laye
 python $V60
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.0 FMRTE-informed certification layer failed.' }
 
-Write-Host 'Element release stack applied through v6.0 successfully.'
+$V61 = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub.py'
+if (-not (Test-Path -LiteralPath $V61)) { throw "Element v6.1 Player Data Hub layer missing: $V61" }
+python $V61
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub layer failed.' }
+
+Write-Host 'Element release stack applied through v6.1 Player Data Hub successfully.'
