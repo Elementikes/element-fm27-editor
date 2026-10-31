@@ -26,4 +26,9 @@ if (-not (Test-Path -LiteralPath $V61Nav)) { throw "Element v6.1 Player Data Hub
 python $V61Nav
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub navigation failed.' }
 
-Write-Host 'Element release stack applied through v6.1 Player Data Hub successfully.'
+$V611 = Join-Path $RepoRoot 'layers/apply-v6.1.1-offer-delta-certifier.py'
+if (-not (Test-Path -LiteralPath $V611)) { throw "Element v6.1.1 offer delta certifier missing: $V611" }
+python $V611
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.1.1 offer delta certifier failed.' }
+
+Write-Host 'Element release stack applied through v6.1.1 Player Data Hub + Offer Delta Certifier successfully.'
