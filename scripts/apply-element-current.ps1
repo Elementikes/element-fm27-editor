@@ -104,7 +104,7 @@ if (-not (Test-Path -LiteralPath $V49)) { throw "Element v4.9 consolidator missi
 python $V49
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.9 mapping consolidation failed.' }
 
-# v5.0 boundary normalization + guarded live Force Transfer / Sell Assist / Squads.
+# v5.0 core transaction + compact squad layout.
 $V50Prep = Join-Path $RepoRoot 'layers/prepare-v5.0-boundaries.py'
 if (-not (Test-Path -LiteralPath $V50Prep)) { throw "Element v5.0 boundary prep missing: $V50Prep" }
 python $V50Prep
@@ -113,6 +113,13 @@ if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 boundary prep failed.' }
 $V50 = Join-Path $RepoRoot 'layers/apply-v5.0-force-transfer.py'
 if (-not (Test-Path -LiteralPath $V50)) { throw "Element v5.0 layer missing: $V50" }
 python $V50
-if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 Force Transfer layer failed.' }
+if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 Force Transfer core layer failed.' }
+
+# Player Transfer Lab UI uses small semantic markers rather than generated
+# source block equality, so overlay formatting cannot break the release.
+$V50Ui = Join-Path $RepoRoot 'layers/apply-v5.0-player-ui.py'
+if (-not (Test-Path -LiteralPath $V50Ui)) { throw "Element v5.0 Player UI layer missing: $V50Ui" }
+python $V50Ui
+if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 Player Transfer UI layer failed.' }
 
 Write-Host 'Element CURRENT release stack applied through v5.0 successfully.'
