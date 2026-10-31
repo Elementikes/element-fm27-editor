@@ -71,4 +71,9 @@ if (-not (Test-Path -LiteralPath $V6261)) { throw "Element v6.2.6.1 tactical MAX
 python $V6261
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.1 tactical MAX compile hotfix failed.' }
 
-Write-Host 'Element release stack applied through v6.2.6.1 Tactical MAX compile hotfix successfully.'
+$V6262 = Join-Path $RepoRoot 'layers/apply-v6.2.6.2-tactical-max-diagnostics.py'
+if (-not (Test-Path -LiteralPath $V6262)) { throw "Element v6.2.6.2 tactical MAX diagnostics missing: $V6262" }
+python $V6262
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.2 tactical MAX diagnostics failed.' }
+
+Write-Host 'Element release stack applied through v6.2.6.2 Tactical MAX diagnostics successfully.'
