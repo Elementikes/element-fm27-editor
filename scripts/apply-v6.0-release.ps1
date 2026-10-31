@@ -36,4 +36,9 @@ if (-not (Test-Path -LiteralPath $V62)) { throw "Element v6.2 semantic lab missi
 python $V62
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2 semantic lab failed.' }
 
-Write-Host 'Element release stack applied through v6.2 Semantic Lab successfully.'
+$V621 = Join-Path $RepoRoot 'layers/apply-v6.2.1-fmrte27-surface.py'
+if (-not (Test-Path -LiteralPath $V621)) { throw "Element v6.2.1 FMRTE27 surface layer missing: $V621" }
+python $V621
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.1 FMRTE27 surface layer failed.' }
+
+Write-Host 'Element release stack applied through v6.2.1 FMRTE27 semantic surface successfully.'
