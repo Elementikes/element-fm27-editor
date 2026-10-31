@@ -96,10 +96,24 @@ fn element_set_club_money(
 
 '@
 $club=$club.Replace($financeAnchor,$financeHelper+$financeAnchor)
-$club=Replace-Required $club @'
-    ui.strong("Finance");
-    // Each row edits the sub-record its schema location names (FM26 keeps the
-'@ @'
+
+$financeBody=@'
+fn show_finance(
+    schemas: &'static crate::fields::VersionedSchemas,
+    ui: &mut egui::Ui,
+    club: &mut ClubView,
+    edits: &mut Vec<FieldEdit>,
+) {
+    ui.spacing_mut().item_spacing = egui::vec2(7.0, 4.0);
+'@
+$financePremium=@'
+fn show_finance(
+    schemas: &'static crate::fields::VersionedSchemas,
+    ui: &mut egui::Ui,
+    club: &mut ClubView,
+    edits: &mut Vec<FieldEdit>,
+) {
+    ui.spacing_mut().item_spacing = egui::vec2(7.0, 4.0);
     ui.horizontal(|ui| {
         ui.label(egui::RichText::new("FINANCE COMMAND CENTER").size(13.0).strong().color(egui::Color32::from_rgb(225,232,245)));
         ui.separator();
@@ -127,11 +141,7 @@ $club=Replace-Required $club @'
             });
         });
     ui.add_space(5.0);
-    ui.label(egui::RichText::new("LIVE EDITABLE VALUES").size(9.0).strong().color(egui::Color32::from_rgb(112,177,255)));
-    // Each row edits the sub-record its schema location names (FM26 keeps the
-'@ 'finance command center'
-
-# Clarify the one budget field we deliberately cannot expose as live.
-$club=$club.Replace('if !shown {`n        ui.label("Finance data not available.");`n    }','if !shown {`n        ui.label("Finance data not available.");`n    }')
+'@
+$club=Replace-Required $club $financeBody $financePremium 'finance command center'
 Write-Text $clubPath $club
 Write-Host 'Element v4.2c Editable Potential + Finance Command Center applied successfully.'
