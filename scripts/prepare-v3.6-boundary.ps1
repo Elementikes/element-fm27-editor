@@ -4,26 +4,24 @@ $Path = Join-Path $SourceRoot 'src/ui/club_panel.rs'
 if (-not (Test-Path -LiteralPath $Path)) { throw "Source file not found: $Path" }
 $text = [IO.File]::ReadAllText($Path)
 
-# Normalize the historical tactical-understanding/stadium boundary when needed.
-if ($text.Contains("}`r`nfn show_stadium(")) {
-    $text = $text.Replace("}`r`nfn show_stadium(", "}`r`n`r`nfn show_stadium(")
-} elseif ($text.Contains("}`nfn show_stadium(")) {
-    $text = $text.Replace("}`nfn show_stadium(", "}`n`nfn show_stadium(")
-}
+# v3.6 core uses an LF-based regex boundary. Normalize the generated Rust file
+# so the premium viewer can replace exactly show_tactical_understanding() and
+# stop before the shared club UI helpers inserted by v1.8.
+$text = $text.Replace("`r`n", "`n")
 
-# The v3.6 premium repair historically used the next `fn show_stadium(` token as
-# its end marker. In the generated club panel, several other Club tab helpers
-# (starting with show_squads) live between Tactical Knowledge and the real
-# show_stadium function. Insert a harmless comment sentinel immediately before
-# show_squads so the repair stops at the correct boundary and preserves every
-# following helper.
-$sentinel = '// v3.6 repair sentinel: fn show_stadium('
-if (-not $text.Contains($sentinel)) {
-    $needle = 'fn show_squads('
-    $at = $text.IndexOf($needle)
-    if ($at -lt 0) { throw 'v3.6: show_squads boundary not found for repair sentinel' }
-    $text = $text.Substring(0, $at) + $sentinel + "`n" + $text.Substring($at)
-}
+$start = $text.IndexOf('fn show_tactical_understanding(ui: &mut egui::Ui, club: &ClubView) {')
+if ($start -lt 0) { throw 'v3.6: show_tactical_understanding start not found' }
+$helper = $text.IndexOf('fn locked_notice(ui: &mut egui::Ui, text: &str) {', $start)
+if ($helper -lt 0) { throw 'v3.6: locked_notice boundary not found after Tactical Knowledge' }
+
+# Ensure the core regex lookahead (?=\n\nfn ) is satisfied immediately before
+# locked_notice without moving or deleting any helper/page implementation.
+$prefix = $text.Substring(0, $helper).TrimEnd("`n")
+$suffix = $text.Substring($helper)
+$text = $prefix + "`n`n" + $suffix
+
+# Remove any obsolete sentinel left by earlier v3.6 repair attempts.
+$text = $text.Replace('// v3.6 repair sentinel: fn show_stadium(' + "`n", '')
 
 [IO.File]::WriteAllText($Path, $text, [Text.UTF8Encoding]::new($false))
-Write-Host 'v3.6 Tactical Knowledge boundary + club-function preservation sentinel prepared.'
+Write-Host 'v3.6 Tactical Knowledge boundary normalized safely before shared club UI helpers.'
