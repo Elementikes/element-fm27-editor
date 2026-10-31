@@ -1,60 +1,28 @@
 from pathlib import Path
 
+# Validate the generated Player Transfer Lab boundary.
 path = Path.cwd() / "src" / "ui" / "player_panel.rs"
 text = path.read_text(encoding="utf-8")
-
-marker = "fn show_transfer_lab("
-pos = text.find(marker)
-if pos < 0:
+if "fn show_transfer_lab(" not in text:
     raise SystemExit("v5.0 boundary prep: show_transfer_lab not found")
 
-# Inject the v5 market helpers directly before the Transfer Lab function.
-# This intentionally avoids relying on historical comment separators, which
-# changed across generated-source overlays.
-helper = r'''fn element_v5_listing_now(
-    schemas: &'static crate::fields::VersionedSchemas,
-    player: &mut PlayerRecord,
-    edits: &mut Vec<FieldEdit>,
-) -> bool {
-    let (Some(raw),Some(base),Some(today))=(player.contract_raw.as_mut(),player.contract_addr,player.game_date) else{return false;};
-    let Some(date_off)=schemas.offset_of("p_list_date") else{return false;};
-    let Some(flags_off)=schemas.offset_of("p_list_flags") else{return false;};
-    let Some(code_off)=schemas.offset_of("p_list_code") else{return false;};
-    if date_off+4>raw.len()||flags_off>=raw.len()||code_off>=raw.len(){return false;}
-    let start=date_off;let end=code_off+1;
-    if end>raw.len()||flags_off<start||flags_off>=end{return false;}
-    let old=raw[start..end].to_vec();let mut new=old.clone();
-    new[0..4].copy_from_slice(&today.raw.to_le_bytes());
-    new[flags_off-start]=raw[flags_off]|1;
-    new[code_off-start]=5;
-    if new==old{return true;}
-    raw[start..end].copy_from_slice(&new);
-    edits.push(FieldEdit{addr:base+start as u64,old_raw:old,new_raw:new,description:"Sell Assist — transfer list now".into()});
-    true
-}
+# The v5 layer originally compared the entire helper block byte-for-byte.
+# Generated overlays can preserve equivalent code with different surrounding
+# comments/line endings, so normalize that one insertion rule to a function
+# marker check before executing the layer.
+layer = Path(__file__).resolve().parent / "apply-v5.0-force-transfer.py"
+source = layer.read_text(encoding="utf-8")
+section_marker = "# ---------- player_panel.rs ----------"
+pos = source.find(section_marker)
+if pos < 0:
+    raise SystemExit("v5.0 boundary prep: player_panel section missing in v5 layer")
+head, tail = source[:pos], source[pos:]
+frag = """if helper not in t:\n    assert anchor in t\n    t=t.replace(anchor,helper+anchor,1)"""
+robust = """if \"fn element_v5_listing_now(\" not in t:\n    marker=\"fn show_transfer_lab(\"\n    pos=t.find(marker)\n    if pos<0: raise SystemExit(\"v5.0: show_transfer_lab marker missing\")\n    t=t[:pos]+helper+t[pos:]"""
+if frag in tail:
+    tail = tail.replace(frag, robust, 1)
+elif "fn element_v5_listing_now(" not in tail:
+    raise SystemExit("v5.0 boundary prep: helper insertion rule not found")
+layer.write_text(head + tail, encoding="utf-8")
 
-fn element_v5_offer_magnet(
-    schemas: &'static crate::fields::VersionedSchemas,
-    player: &mut PlayerRecord,
-    edits: &mut Vec<FieldEdit>,
-    percent: u32,
-) {
-    let _=element_v5_listing_now(schemas,player,edits);
-    let Some(field)=schemas.field("p_value") else{return;};
-    let Some(loc)=field.offset.as_ref() else{return;};
-    let off=loc.offset() as usize;
-    let Some(bytes)=player.raw.get(off..off+4) else{return;};
-    let old=u32::from_le_bytes(bytes.try_into().unwrap());
-    if old==0||old==u32::MAX{return;}
-    let new=((u64::from(old)*u64::from(percent))/100).clamp(1,u64::from(u32::MAX)) as u32;
-    if new==old{return;}
-    player.raw[off..off+4].copy_from_slice(&new.to_le_bytes());
-    edits.push(FieldEdit{addr:player.addr+off as u64,old_raw:old.to_le_bytes().to_vec(),new_raw:new.to_le_bytes().to_vec(),description:format!("Offer Magnet — transfer value {old} → {new} ({percent}%)")});
-}
-
-'''
-if "fn element_v5_listing_now(" not in text:
-    text = text[:pos] + helper + text[pos:]
-
-path.write_text(text, encoding="utf-8")
-print("v5.0 boundary prep completed: market helpers injected before show_transfer_lab.")
+print("v5.0 boundary prep completed: Transfer Lab helper insertion is marker-based.")
