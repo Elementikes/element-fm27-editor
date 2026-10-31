@@ -31,4 +31,9 @@ if (-not (Test-Path -LiteralPath $V611)) { throw "Element v6.1.1 offer delta cer
 python $V611
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.1.1 offer delta certifier failed.' }
 
-Write-Host 'Element release stack applied through v6.1.1 Player Data Hub + Offer Delta Certifier successfully.'
+$V62 = Join-Path $RepoRoot 'layers/apply-v6.2-semantic-lab.py'
+if (-not (Test-Path -LiteralPath $V62)) { throw "Element v6.2 semantic lab missing: $V62" }
+python $V62
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2 semantic lab failed.' }
+
+Write-Host 'Element release stack applied through v6.2 Semantic Lab successfully.'
