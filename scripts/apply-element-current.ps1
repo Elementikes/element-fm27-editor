@@ -82,19 +82,23 @@ if (-not (Test-Path -LiteralPath $CompileFix)) { throw "Element v4.7 compile fix
 python $CompileFix
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.7 compile compatibility pass failed.' }
 
-# v4.8 final-source overlay: functional Player pages, centered Squad control deck,
-# certified bulk writes, interactive Force Transfer validation lab, and FM
-# logo-pack config.xml/UID crest resolution. Unmapped writes stay safety-gated.
+# v4.8 final-source overlay.
 $V48Overlay = Join-Path $RepoRoot 'layers/apply-v4.8-overlay.py'
 if (-not (Test-Path -LiteralPath $V48Overlay)) { throw "Element v4.8 overlay applicator missing: $V48Overlay" }
 python $V48Overlay
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 source overlay failed.' }
 
-# v4.8 pinned-source compile compatibility: synthetic PlayerRecord constructors
-# must explicitly mark new process-backed live lists as unmapped.
+# v4.8 pinned-source compile compatibility.
 $V48CompileFix = Join-Path $RepoRoot 'layers/fix-v4.8-compile.py'
 if (-not (Test-Path -LiteralPath $V48CompileFix)) { throw "Element v4.8 compile fix missing: $V48CompileFix" }
 python $V48CompileFix
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 compile compatibility pass failed.' }
 
-Write-Host 'Element CURRENT release stack applied through v4.8 successfully.'
+# v4.8.1 stability: never recursively scan huge graphics packs from egui render.
+# Missing crest lookups are fast and negatively cached for the current session.
+$V481Stability = Join-Path $RepoRoot 'layers/fix-v4.8.1-stability.py'
+if (-not (Test-Path -LiteralPath $V481Stability)) { throw "Element v4.8.1 stability hotfix missing: $V481Stability" }
+python $V481Stability
+if ($LASTEXITCODE -ne 0) { throw 'Element v4.8.1 stability hotfix failed.' }
+
+Write-Host 'Element CURRENT release stack applied through v4.8.1 successfully.'
