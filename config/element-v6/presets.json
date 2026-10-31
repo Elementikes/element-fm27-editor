@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "presets": [
+    {
+      "id": "heal",
+      "name": "Heal",
+      "category": "Players",
+      "description": "Restore verified condition-related fields and clear injury state only when their record chains are mapped.",
+      "actions": [
+        {"type":"set","field":"p_fitness","value":10000,"requires":"mapped:p_fitness"},
+        {"type":"set","field":"p_sharpness","value":10000,"requires":"mapped:p_sharpness"},
+        {"type":"set","field":"p_fatigue","value":0,"requires":"mapped:p_fatigue"},
+        {"type":"custom","name":"clear_injury","requires":"capability:player.heal"}
+      ]
+    },
+    {
+      "id": "inspire",
+      "name": "Inspire",
+      "category": "Players",
+      "description": "Max morale and clear mapped unhappiness state.",
+      "actions": [
+        {"type":"set","field":"p_morale","value":20,"requires":"mapped:p_morale"},
+        {"type":"custom","name":"clear_unhappiness","requires":"mapped:contract_happiness"},
+        {"type":"custom","name":"improve_team_cohesion","requires":"capability:team.cohesion"}
+      ]
+    },
+    {
+      "id": "perfect-player",
+      "name": "Perfect Player",
+      "category": "Players",
+      "description": "Element's existing certified preset expressed through the v6 config layer.",
+      "actions": [
+        {"type":"set-category","category":"Technical","value":20,"requires":"writable-category:Technical"},
+        {"type":"set-category","category":"Mental","value":20,"requires":"writable-category:Mental"},
+        {"type":"set-category","category":"Physical","value":20,"requires":"writable-category:Physical"},
+        {"type":"set","field":"p_ca","value":200,"requires":"mapped:p_ca"},
+        {"type":"set","field":"p_pa","value":200,"requires":"mapped:p_pa"},
+        {"type":"set","field":"injury_proneness","value":1,"requires":"mapped:injury_proneness"},
+        {"type":"set","field":"p_dirtiness","value":1,"requires":"mapped:p_dirtiness"},
+        {"type":"set","field":"p_controversy","value":1,"requires":"mapped:p_controversy"}
+      ]
+    },
+    {
+      "id": "wonderkid",
+      "name": "Wonderkid",
+      "category": "Players",
+      "description": "High development ceiling and elite development personality while preserving age and current ability.",
+      "actions": [
+        {"type":"set","field":"p_pa","value":200,"requires":"mapped:p_pa"},
+        {"type":"set-many","fields":["p_professionalism","p_ambition","determination","natural_fitness","work_rate","consistency","important_matches"],"value":20,"requires":"all-fields-mapped"},
+        {"type":"set-many","fields":["injury_proneness","p_dirtiness","p_controversy"],"value":1,"requires":"all-fields-mapped"}
+      ]
+    },
+    {
+      "id": "remove-bans",
+      "name": "Remove Bans",
+      "category": "Players",
+      "actions": [
+        {"type":"custom","name":"remove_bans","requires":"mapped:absence-records"}
+      ]
+    },
+    {
+      "id": "register-uefa",
+      "name": "Register For UEFA",
+      "category": "Players",
+      "actions": [
+        {"type":"custom","name":"uefa_registration","requires":"capability:registration.uefa"}
+      ]
+    },
+    {
+      "id": "trained-at-club",
+      "name": "Trained At Current Club",
+      "category": "Players",
+      "actions": [
+        {"type":"custom","name":"trained_at_current_club","requires":"capability:registration.homegrown_club"}
+      ]
+    },
+    {
+      "id": "trained-in-nation",
+      "name": "Trained In Current Nation",
+      "category": "Players",
+      "actions": [
+        {"type":"custom","name":"trained_in_current_nation","requires":"capability:registration.homegrown_nation"}
+      ]
+    },
+    {
+      "id": "create-history-point",
+      "name": "Create History Point",
+      "category": "Players",
+      "actions": [
+        {"type":"custom","name":"create_history_point","requires":"capability:player.history"}
+      ]
+    },
+    {
+      "id": "improve-team-cohesion",
+      "name": "Improve Team Cohesion",
+      "category": "Clubs",
+      "actions": [
+        {"type":"custom","name":"improve_team_cohesion","requires":"capability:team.cohesion"}
+      ]
+    }
+  ]
+}
