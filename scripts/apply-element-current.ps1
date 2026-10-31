@@ -98,10 +98,16 @@ if (-not (Test-Path -LiteralPath $V481Stability)) { throw "Element v4.8.1 stabil
 python $V481Stability
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8.1 stability hotfix failed.' }
 
-# v4.9 public-source mapping consolidation.
+# v4.9.x public-source mapping + recruitment consolidation.
 $V49 = Join-Path $RepoRoot 'layers/apply-v4.9-consolidation.py'
 if (-not (Test-Path -LiteralPath $V49)) { throw "Element v4.9 consolidator missing: $V49" }
 python $V49
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.9 mapping consolidation failed.' }
 
-Write-Host 'Element CURRENT release stack applied through v4.9 successfully.'
+# v5.0: guarded live Force Transfer, Sell/Offer Magnet and compact Squads.
+$V50 = Join-Path $RepoRoot 'layers/apply-v5.0-force-transfer.py'
+if (-not (Test-Path -LiteralPath $V50)) { throw "Element v5.0 layer missing: $V50" }
+python $V50
+if ($LASTEXITCODE -ne 0) { throw 'Element v5.0 Force Transfer layer failed.' }
+
+Write-Host 'Element CURRENT release stack applied through v5.0 successfully.'
