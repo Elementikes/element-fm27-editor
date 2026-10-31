@@ -258,6 +258,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.8-live-club-squads.ps1
 
+      - name: Apply Element v3.8.1 MEN WOMEN Club Search filter
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.8.1-club-gender-filter.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -265,15 +271,15 @@ jobs:
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v38.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v381.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v3.8 build diagnostics
+      - name: Upload v3.8.1 build diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v3.8-build-diagnostics
-          path: build-v38.log
+          name: v3.8.1-build-diagnostics
+          path: build-v381.log
           if-no-files-found: error
 
       - name: Stage executable
@@ -287,6 +293,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.8-LIVE-CLUB-SQUADS
+          name: Element-FM27-Editor-Windows-x64-v3.8.1-CLUB-GENDER-FILTER
           path: dist/*
           if-no-files-found: error
