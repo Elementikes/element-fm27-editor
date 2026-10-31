@@ -61,10 +61,11 @@ Invoke-Layer 'apply-v3.8-live-club-squads.ps1'
 # v3.8.1 chains global gender filter -> squad intelligence -> morale -> v3.9 staff.
 Invoke-Layer 'apply-v3.8.1-club-gender-filter.ps1'
 
-# v4.0 transfer / contract intelligence.
+# v4.x transfer / contract intelligence.
 Invoke-Layer 'apply-v4.0-transfer-center-live.ps1'
 # Transfer Center replaces the old block that originally sat immediately before
 # Tactical Knowledge; restore the v2.7 pointer guard if that helper was sliced.
 Invoke-Layer 'fix-v4.0-tactical-helper.ps1'
+Invoke-Layer 'apply-v4.1-contract-intelligence-premium.ps1'
 
-Write-Host 'Element CURRENT release stack applied through v4.0 successfully.'
+Write-Host 'Element CURRENT release stack applied through v4.1 successfully.'
