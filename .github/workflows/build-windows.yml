@@ -223,6 +223,12 @@ jobs:
           cd source
           & ../element/scripts/apply-v3.5-final-semantic-certification.ps1
 
+      - name: Apply Element v3.6 premium Tactical Knowledge viewer
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.6-premium-tactical-viewer.ps1
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
@@ -243,6 +249,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v3.5-FINAL-SEMANTIC-CERTIFICATION
+          name: Element-FM27-Editor-Windows-x64-v3.6-PREMIUM-TACTICAL-VIEWER
           path: dist/*
           if-no-files-found: error
