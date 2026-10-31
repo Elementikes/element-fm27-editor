@@ -229,11 +229,22 @@ jobs:
           cd source
           & ../element/scripts/prepare-v3.6-boundary.ps1
 
-      - name: Apply Element v3.6 premium Tactical Knowledge viewer
+      - name: Apply Element v3.6 viewer core
         shell: pwsh
         run: |
           cd source
-          & ../element/scripts/apply-v3.6-premium-tactical-viewer.ps1
+          try {
+            & ../element/scripts/apply-v3.6-premium-tactical-viewer.ps1
+          } catch {
+            if ($_.Exception.Message -notlike '*Tactical Knowledge function boundary not found*') { throw }
+            Write-Host 'v3.6 core applied; legacy UI boundary failure handed to robust repair pass.'
+          }
+
+      - name: Apply Element v3.6 premium Tactical Knowledge UI repair
+        shell: pwsh
+        run: |
+          cd source
+          & ../element/scripts/apply-v3.6-premium-ui-repair.ps1
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
