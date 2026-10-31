@@ -90,4 +90,11 @@ if (-not (Test-Path -LiteralPath $V48Overlay)) { throw "Element v4.8 overlay app
 python $V48Overlay
 if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 source overlay failed.' }
 
+# v4.8 pinned-source compile compatibility: synthetic PlayerRecord constructors
+# must explicitly mark new process-backed live lists as unmapped.
+$V48CompileFix = Join-Path $RepoRoot 'layers/fix-v4.8-compile.py'
+if (-not (Test-Path -LiteralPath $V48CompileFix)) { throw "Element v4.8 compile fix missing: $V48CompileFix" }
+python $V48CompileFix
+if ($LASTEXITCODE -ne 0) { throw 'Element v4.8 compile compatibility pass failed.' }
+
 Write-Host 'Element CURRENT release stack applied through v4.8 successfully.'
