@@ -47,7 +47,6 @@ Invoke-Layer 'apply-v3.3-universal-descriptor-resolver.ps1'
 Invoke-Layer 'apply-v3.4-all-clubs-certification.ps1'
 Invoke-Layer 'apply-v3.5-final-semantic-certification.ps1'
 Invoke-Layer 'prepare-v3.6-boundary.ps1'
-
 try {
     Invoke-Layer 'apply-v3.6-premium-tactical-viewer.ps1'
 } catch {
@@ -57,23 +56,26 @@ try {
 Invoke-Layer 'apply-v3.6-premium-ui-repair.ps1'
 Invoke-Layer 'apply-v3.7-tactical-intelligence.ps1'
 Invoke-Layer 'apply-v3.8-live-club-squads.ps1'
-
-# v3.8.1 chains global gender filter -> squad intelligence -> morale -> v3.9 staff.
 Invoke-Layer 'apply-v3.8.1-club-gender-filter.ps1'
 
-# v4.x transfer / contract intelligence.
+# v4.x transfer / contract / recruitment foundation
 Invoke-Layer 'apply-v4.0-transfer-center-live.ps1'
-# Transfer Center replaces the old block that originally sat immediately before
-# Tactical Knowledge; restore the v2.7 pointer guard if that helper was sliced.
 Invoke-Layer 'fix-v4.0-tactical-helper.ps1'
 Invoke-Layer 'apply-v4.1-contract-intelligence-premium.ps1'
 Invoke-Layer 'apply-v4.1.1-market-quick-filters.ps1'
-
-# v4.2 recruitment intelligence + safe squad bulk actions + live finance/PA tools.
 Invoke-Layer 'apply-v4.2a-player-intelligence.ps1'
 Invoke-Layer 'apply-v4.2b-squad-bulk-actions.ps1'
 Invoke-Layer 'apply-v4.2c-finance-potential.ps1'
 Invoke-Layer 'apply-v4.2.1-intelligence-accuracy-hotfix.ps1'
 Invoke-Layer 'apply-v4.2.2-morale-ux.ps1'
 
-Write-Host 'Element CURRENT release stack applied through v4.2.2 successfully.'
+# v4.2.3 -> v4.7 generated-source release stack:
+# sticky Squad Actions + club crests; verified bulk Heal/Lift Bans; exact live
+# contract windows; Deal Score v2; Force Transfer validation lab; dynamics /
+# eligibility research gates; smart squad audit; final Recruitment Board.
+$FinalPatcher = Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path 'layers/apply-v4.7-final.py'
+if (-not (Test-Path -LiteralPath $FinalPatcher)) { throw "Element v4.7 patcher missing: $FinalPatcher" }
+python $FinalPatcher
+if ($LASTEXITCODE -ne 0) { throw 'Element v4.7 generated patch failed.' }
+
+Write-Host 'Element CURRENT release stack applied through v4.7 successfully.'
