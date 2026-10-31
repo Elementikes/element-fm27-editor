@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "name": "Element Player Data Hub",
+  "comparisonCohorts": [
+    {"id":"database","label":"Loaded Database","enabled":true},
+    {"id":"age_band","label":"Same Age Band","enabled":true},
+    {"id":"league","label":"Same League","enabled":false,"gate":"player_league_membership"},
+    {"id":"position","label":"Same Position","enabled":false,"gate":"position_cohort_cache"}
+  ],
+  "sections": [
+    {
+      "id":"dribbling",
+      "label":"Dribbling & Carrying",
+      "metrics":[
+        {"id":"dribbling","label":"Dribbling","source":"attribute","field":"dribbling","weight":1.00},
+        {"id":"technique","label":"Technique","source":"attribute","field":"technique","weight":0.85},
+        {"id":"agility","label":"Agility","source":"attribute","field":"agility","weight":0.80},
+        {"id":"acceleration","label":"Acceleration","source":"attribute","field":"acceleration","weight":0.75},
+        {"id":"balance","label":"Balance","source":"attribute","field":"balance","weight":0.55},
+        {"id":"flair","label":"Flair","source":"attribute","field":"flair","weight":0.50},
+        {"id":"successful_dribbles_per90","label":"Successful Dribbles /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"dribble_success","label":"Dribble Success %","source":"match_stat","gate":"player_match_stats"}
+      ]
+    },
+    {
+      "id":"attacking",
+      "label":"Attacking",
+      "metrics":[
+        {"id":"finishing","label":"Finishing","source":"attribute","field":"finishing","weight":1.00},
+        {"id":"off_the_ball","label":"Off The Ball","source":"attribute","field":"off_the_ball","weight":0.90},
+        {"id":"composure","label":"Composure","source":"attribute","field":"composure","weight":0.80},
+        {"id":"anticipation","label":"Anticipation","source":"attribute","field":"anticipation","weight":0.65},
+        {"id":"goals_per90","label":"Goals /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"xg_per90","label":"xG /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"shot_conversion","label":"Shot Conversion %","source":"match_stat","gate":"player_match_stats"},
+        {"id":"shots_on_target","label":"Shots on Target %","source":"match_stat","gate":"player_match_stats"}
+      ]
+    },
+    {
+      "id":"creation",
+      "label":"Passing & Creation",
+      "metrics":[
+        {"id":"passing","label":"Passing","source":"attribute","field":"passing","weight":1.00},
+        {"id":"vision","label":"Vision","source":"attribute","field":"vision","weight":1.00},
+        {"id":"technique","label":"Technique","source":"attribute","field":"technique","weight":0.75},
+        {"id":"decisions","label":"Decisions","source":"attribute","field":"decisions","weight":0.70},
+        {"id":"crossing","label":"Crossing","source":"attribute","field":"crossing","weight":0.55},
+        {"id":"xa_per90","label":"xA /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"key_passes_per90","label":"Key Passes /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"pass_completion","label":"Pass Completion %","source":"match_stat","gate":"player_match_stats"}
+      ]
+    },
+    {
+      "id":"defending",
+      "label":"Defending",
+      "metrics":[
+        {"id":"tackling","label":"Tackling","source":"attribute","field":"tackling","weight":1.00},
+        {"id":"positioning","label":"Positioning","source":"attribute","field":"positioning","weight":0.95},
+        {"id":"marking","label":"Marking","source":"attribute","field":"marking","weight":0.90},
+        {"id":"anticipation","label":"Anticipation","source":"attribute","field":"anticipation","weight":0.70},
+        {"id":"concentration","label":"Concentration","source":"attribute","field":"concentration","weight":0.65},
+        {"id":"tackles_won_per90","label":"Tackles Won /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"interceptions_per90","label":"Interceptions /90","source":"match_stat","gate":"player_match_stats"},
+        {"id":"aerial_win_pct","label":"Aerial Win %","source":"match_stat","gate":"player_match_stats"}
+      ]
+    },
+    {
+      "id":"physical",
+      "label":"Physical",
+      "metrics":[
+        {"id":"pace","label":"Pace","source":"attribute","field":"pace","weight":1.00},
+        {"id":"acceleration","label":"Acceleration","source":"attribute","field":"acceleration","weight":1.00},
+        {"id":"stamina","label":"Stamina","source":"attribute","field":"stamina","weight":0.80},
+        {"id":"strength","label":"Strength","source":"attribute","field":"strength","weight":0.75},
+        {"id":"agility","label":"Agility","source":"attribute","field":"agility","weight":0.70},
+        {"id":"natural_fitness","label":"Natural Fitness","source":"attribute","field":"natural_fitness","weight":0.60}
+      ]
+    },
+    {
+      "id":"goalkeeping",
+      "label":"Goalkeeping",
+      "metrics":[
+        {"id":"reflexes","label":"Reflexes","source":"attribute","field":"reflexes","weight":1.00},
+        {"id":"one_on_ones","label":"One on Ones","source":"attribute","field":"one_on_ones","weight":0.90},
+        {"id":"handling","label":"Handling","source":"attribute","field":"handling","weight":0.90},
+        {"id":"aerial_reach","label":"Aerial Reach","source":"attribute","field":"aerial_reach","weight":0.75},
+        {"id":"command_of_area","label":"Command of Area","source":"attribute","field":"command_of_area","weight":0.70},
+        {"id":"save_pct","label":"Save %","source":"match_stat","gate":"player_match_stats"},
+        {"id":"goals_prevented","label":"Goals Prevented","source":"match_stat","gate":"player_match_stats"}
+      ]
+    }
+  ],
+  "radarAxes": [
+    {"id":"dribbling","label":"Dribbling"},
+    {"id":"attacking","label":"Attacking"},
+    {"id":"creation","label":"Creation"},
+    {"id":"defending","label":"Defending"},
+    {"id":"physical","label":"Physical"}
+  ]
+}
