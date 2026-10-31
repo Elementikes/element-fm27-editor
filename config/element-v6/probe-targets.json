@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "targets": [
+    {"id":"fitness","label":"Fitness","fields":["Condition","MatchSharpness","Jadedness","IsInjured"],"notes":"Known target scales include Condition/Sharpness 0..10000."},
+    {"id":"happiness","label":"Happiness","fields":["Morale","Contract.Happiness","Contract.PlayingTimeHappiness","Contract.NumberOfUnhappinessMotives"],"notes":"Change one observable state only before compare."},
+    {"id":"transfer_proposal","label":"Transfer Proposal","fields":["BuyerTeam","SellerTeam","Value","Status","Type","FutureContract"],"notes":"Best witness: one offer added or removed."},
+    {"id":"future_transfer","label":"Future Transfer","fields":["BuyerTeam","SellerTeam","Value","TransferDate","TransferType"],"notes":"Use before/after confirmed transfer agreement."},
+    {"id":"registration","label":"Registration / Homegrown","fields":["SelectedCompetitionRegistrationType","SelectedFormedAtPeriod","SelectedTrainedAtNation"],"notes":"Change one registration relation only."},
+    {"id":"stats","label":"Match Stats / Data Hub","fields":["Appearances","Minutes","Goals","Assists","AverageRating","ExpectedGoals","ExpectedAssists","KeyPasses","Interceptions"],"notes":"Capture before and after one completed match."},
+    {"id":"relationships","label":"Relationships","fields":["SelectedType","ObjectName","Value"],"notes":"Add or change exactly one relationship."},
+    {"id":"availability","label":"Bans / Unavailability","fields":["IsBanned"],"notes":"Use a single known ban state change."},
+    {"id":"retirement","label":"Retirement","fields":["HasInternationalRetirement","RetireDate"],"notes":"Use a known retirement state change."}
+  ]
+}
