@@ -16,9 +16,14 @@ if (-not (Test-Path -LiteralPath $V60)) { throw "Element v6.0 certification laye
 python $V60
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.0 FMRTE-informed certification layer failed.' }
 
-$V61 = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub.py'
-if (-not (Test-Path -LiteralPath $V61)) { throw "Element v6.1 Player Data Hub layer missing: $V61" }
-python $V61
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub layer failed.' }
+$V61Core = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub-core.py'
+if (-not (Test-Path -LiteralPath $V61Core)) { throw "Element v6.1 Player Data Hub core missing: $V61Core" }
+python $V61Core
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub core failed.' }
+
+$V61Nav = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub-nav.py'
+if (-not (Test-Path -LiteralPath $V61Nav)) { throw "Element v6.1 Player Data Hub navigation missing: $V61Nav" }
+python $V61Nav
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub navigation failed.' }
 
 Write-Host 'Element release stack applied through v6.1 Player Data Hub successfully.'
