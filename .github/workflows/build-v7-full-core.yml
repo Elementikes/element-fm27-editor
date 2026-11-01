@@ -24,7 +24,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Apply Element v7.4 Full Core
+      - name: Apply Element v7.7 Full Core
         shell: pwsh
         run: |
           cd source
@@ -40,26 +40,32 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.4-data-hub.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.5-club-squads.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.6-staff-power-tools.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.7-club-power-tools.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build Element v7.4
+      - name: Build Element v7.7
         shell: pwsh
         run: |
           cd source
           cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v7.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v7.4 diagnostics
+      - name: Upload v7.7 diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v7.4-full-core-build-diagnostics
+          name: v7.7-full-core-build-diagnostics
           path: build-v7.log
           if-no-files-found: warn
 
-      - name: Stage v7.4
+      - name: Stage v7.7
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -68,9 +74,9 @@ jobs:
           if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
           if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
 
-      - name: Upload Element v7.4 Full Core Windows x64
+      - name: Upload Element v7.7 Full Core Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v7.4-FULL-CORE
+          name: Element-FM27-Editor-Windows-x64-v7.7-FULL-CORE
           path: dist/**
           if-no-files-found: error
