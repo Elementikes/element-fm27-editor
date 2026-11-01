@@ -40,6 +40,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.4-data-hub.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.4.1-data-hub-compile-hotfix.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.5-club-squads.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.6-staff-power-tools.py
