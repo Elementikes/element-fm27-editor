@@ -1,0 +1,81 @@
+name: Build Element v8.7 Index Interop Certifier
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'v7/**'
+      - '.github/workflows/build-v8.7-index-interop.yml'
+
+concurrency:
+  group: element-v8.7-index-interop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-v87:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Element
+        uses: actions/checkout@v4
+        with:
+          path: element
+
+      - name: Checkout current FM27 editor core
+        uses: actions/checkout@v4
+        with:
+          repository: barak14/fm-editor
+          ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
+          path: source
+
+      - name: Apply Element v8.7 full stack
+        shell: pwsh
+        run: |
+          cd source
+          python ../element/v7/apply-v8.7-stack.py 2>&1 | Tee-Object ../apply-v8.7.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build v8.7 native helper
+        shell: pwsh
+        run: |
+          cd source
+          rustc ../element/v7/native_offer_helper.rs -O --crate-type cdylib -o Element-FM27-NativeOffer.dll 2>&1 | Tee-Object ../helper-v8.7.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build Element v8.7
+        shell: pwsh
+        run: |
+          cd source
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v8.7.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload v8.7 diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8.7-index-interop-certifier-diagnostics
+          path: |
+            apply-v8.7.log
+            helper-v8.7.log
+            build-v8.7.log
+          if-no-files-found: warn
+
+      - name: Stage v8.7
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item source/target/release/fm-editor.exe dist/Element-FM27-Editor.exe
+          Copy-Item source/Element-FM27-NativeOffer.dll dist/Element-FM27-NativeOffer.dll
+          Copy-Item source/LICENSE dist/LICENSE
+          if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
+          if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
+
+      - name: Upload Element v8.7 Index Interop Certifier Windows x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: Element-FM27-Editor-Windows-x64-v8.7-INDEX-INTEROP-CERTIFIER
+          path: dist/**
+          if-no-files-found: error
