@@ -32,7 +32,7 @@ jobs:
         shell: pwsh
         run: |
           cd source
-          python ../element/v7/apply-v8.7-stack2.py 2>&1 | Tee-Object ../apply-v8.7.log
+          python ../element/v7/apply-v8.7-stack3.py 2>&1 | Tee-Object ../apply-v8.7.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
