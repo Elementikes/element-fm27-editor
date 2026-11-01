@@ -8,6 +8,10 @@ on:
       - 'v7/**'
       - '.github/workflows/build-v7-full-core.yml'
 
+concurrency:
+  group: element-v7-full-core-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-v7:
     runs-on: windows-latest
