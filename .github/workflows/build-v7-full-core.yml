@@ -28,7 +28,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Apply Element v8.0 Full Core
+      - name: Apply Element v8.1 Full Core
         shell: pwsh
         run: |
           cd source
@@ -68,26 +68,36 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v8.0-fmrte-club-tactical.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.1a-swap-navigation.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.1b1-player-core.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.1b2-player-extras.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.1c-staff-club-surfaces.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.1d-app-routing.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build Element v8.0
+      - name: Build Element v8.1
         shell: pwsh
         run: |
           cd source
           cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v7.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v8.0 diagnostics
+      - name: Upload v8.1 diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v8.0-fmrte-club-tactical-build-diagnostics
+          name: v8.1-buttons-live-build-diagnostics
           path: build-v7.log
           if-no-files-found: warn
 
-      - name: Stage v8.0
+      - name: Stage v8.1
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -96,9 +106,9 @@ jobs:
           if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
           if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
 
-      - name: Upload Element v8.0 Premium UI Windows x64
+      - name: Upload Element v8.1 Buttons Live Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v8.0-FMRTE-CLUB-TACTICAL
+          name: Element-FM27-Editor-Windows-x64-v8.1-BUTTONS-LIVE
           path: dist/**
           if-no-files-found: error
