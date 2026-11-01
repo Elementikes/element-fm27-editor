@@ -25,7 +25,8 @@ $layers = @(
   @('v6.2.8 tactical smart probe','apply-v6.2.8-tactical-smart-probe.py'),
   @('v6.2.9 match exposure / shape probe','apply-v6.2.9-match-exposure-shape-probe.py'),
   @('v6.3.0 tactical candidate matrix','apply-v6.3.0-tactical-candidate-matrix.py'),
-  @('v6.4.0 FMRTE reference integration','apply-v6.4.0-fmrte-reference-integration.py')
+  @('v6.4.0 FMRTE reference integration','apply-v6.4.0-fmrte-reference-integration.py'),
+  @('v6.4.1 tactical FMRTE UI cleanup','apply-v6.4.1-tactical-fmrte-ui-cleanup.py')
 )
 
 foreach ($layer in $layers) {
@@ -36,4 +37,4 @@ foreach ($layer in $layers) {
   if ($LASTEXITCODE -ne 0) { throw "Element $label layer failed." }
 }
 
-Write-Host 'Element release stack applied through v6.4.0 FMRTE Reference Integration successfully.'
+Write-Host 'Element release stack applied through v6.4.1 Tactical FMRTE UI Cleanup successfully.'
