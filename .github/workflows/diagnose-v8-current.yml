@@ -55,17 +55,20 @@ jobs:
           cp source/src/ui/club_panel.rs generated/src/ui/
           cp source/src/ui/staff_panel.rs generated/src/ui/
           cp source/src/ui/player_data_hub.rs generated/src/ui/
+          cp source/src/ui/navigation.rs generated/src/ui/
           cp source/src/app.rs generated/src/
           cp source/src/cache.rs generated/src/
           cp source/src/player.rs generated/src/
           cp source/src/bridge/cmd.rs generated/src/bridge/
+          cp source/src/bridge/worker.rs generated/src/bridge/
           cp source/src/bridge/force_transfer.rs generated/src/bridge/
           cp source/src/bridge/tactical_max_plan.rs generated/src/bridge/
+          cp source/src/bridge/entity_load.rs generated/src/bridge/
           cp source/src/fields/fm27/player.rs generated/src/fields/fm27/
 
       - name: Upload generated source
         uses: actions/upload-artifact@v4
         with:
-          name: element-v8-generated-source
+          name: element-v8-generated-source-expanded
           path: generated/**
           if-no-files-found: error
