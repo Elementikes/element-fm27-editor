@@ -6,94 +6,34 @@ if ($LASTEXITCODE -ne 0) { throw 'Element base stack through v5.2 failed.' }
 
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 
-$V60Offline = Join-Path $RepoRoot 'layers/apply-v6.0-offline-foundation.py'
-if (-not (Test-Path -LiteralPath $V60Offline)) { throw "Element v6.0 offline foundation missing: $V60Offline" }
-python $V60Offline
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.0 offline foundation failed.' }
+$layers = @(
+  @('v6.0 offline foundation','apply-v6.0-offline-foundation.py'),
+  @('v6.0 FMRTE-informed certification','apply-v6.0-fmrte-certification.py'),
+  @('v6.1 Player Data Hub core','apply-v6.1-player-data-hub-core.py'),
+  @('v6.1 Player Data Hub navigation','apply-v6.1-player-data-hub-nav.py'),
+  @('v6.1.1 offer delta certifier','apply-v6.1.1-offer-delta-certifier.py'),
+  @('v6.2 semantic lab','apply-v6.2-semantic-lab.py'),
+  @('v6.2.1 FMRTE27 surface','apply-v6.2.1-fmrte27-surface.py'),
+  @('v6.2.2 club tactical understanding','apply-v6.2.2-club-tactical-understanding.py'),
+  @('v6.2.3 player full surface','apply-v6.2.3-player-full-surface.py'),
+  @('v6.2.4 tactical max workflow','apply-v6.2.4-tactical-ui.py'),
+  @('v6.2.5 club tactical certifier UI','apply-v6.2.5-club-tactical-certifier-ui.py'),
+  @('v6.2.6 selected-club tactical MAX','apply-v6.2.6-selected-club-tactical-max.py'),
+  @('v6.2.6.1 tactical MAX compile hotfix','apply-v6.2.6.1-tactical-max-compile-hotfix.py'),
+  @('v6.2.6.2 tactical MAX diagnostics','apply-v6.2.6.2-tactical-max-diagnostics.py'),
+  @('v6.2.7 tactical missing-fields probe','apply-v6.2.7-tactical-missing-fields-probe.py'),
+  @('v6.2.8 tactical smart probe','apply-v6.2.8-tactical-smart-probe.py'),
+  @('v6.2.9 match exposure / shape probe','apply-v6.2.9-match-exposure-shape-probe.py'),
+  @('v6.3.0 tactical candidate matrix','apply-v6.3.0-tactical-candidate-matrix.py'),
+  @('v6.4.0 FMRTE reference integration','apply-v6.4.0-fmrte-reference-integration.py')
+)
 
-$V60 = Join-Path $RepoRoot 'layers/apply-v6.0-fmrte-certification.py'
-if (-not (Test-Path -LiteralPath $V60)) { throw "Element v6.0 certification layer missing: $V60" }
-python $V60
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.0 FMRTE-informed certification layer failed.' }
+foreach ($layer in $layers) {
+  $label = $layer[0]
+  $path = Join-Path $RepoRoot ('layers/' + $layer[1])
+  if (-not (Test-Path -LiteralPath $path)) { throw "Element $label layer missing: $path" }
+  python $path
+  if ($LASTEXITCODE -ne 0) { throw "Element $label layer failed." }
+}
 
-$V61Core = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub-core.py'
-if (-not (Test-Path -LiteralPath $V61Core)) { throw "Element v6.1 Player Data Hub core missing: $V61Core" }
-python $V61Core
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub core failed.' }
-
-$V61Nav = Join-Path $RepoRoot 'layers/apply-v6.1-player-data-hub-nav.py'
-if (-not (Test-Path -LiteralPath $V61Nav)) { throw "Element v6.1 Player Data Hub navigation missing: $V61Nav" }
-python $V61Nav
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.1 Player Data Hub navigation failed.' }
-
-$V611 = Join-Path $RepoRoot 'layers/apply-v6.1.1-offer-delta-certifier.py'
-if (-not (Test-Path -LiteralPath $V611)) { throw "Element v6.1.1 offer delta certifier missing: $V611" }
-python $V611
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.1.1 offer delta certifier failed.' }
-
-$V62 = Join-Path $RepoRoot 'layers/apply-v6.2-semantic-lab.py'
-if (-not (Test-Path -LiteralPath $V62)) { throw "Element v6.2 semantic lab missing: $V62" }
-python $V62
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2 semantic lab failed.' }
-
-$V621 = Join-Path $RepoRoot 'layers/apply-v6.2.1-fmrte27-surface.py'
-if (-not (Test-Path -LiteralPath $V621)) { throw "Element v6.2.1 FMRTE27 surface layer missing: $V621" }
-python $V621
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.1 FMRTE27 surface layer failed.' }
-
-$V622 = Join-Path $RepoRoot 'layers/apply-v6.2.2-club-tactical-understanding.py'
-if (-not (Test-Path -LiteralPath $V622)) { throw "Element v6.2.2 club tactical understanding layer missing: $V622" }
-python $V622
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.2 club tactical understanding layer failed.' }
-
-$V623 = Join-Path $RepoRoot 'layers/apply-v6.2.3-player-full-surface.py'
-if (-not (Test-Path -LiteralPath $V623)) { throw "Element v6.2.3 player full surface layer missing: $V623" }
-python $V623
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.3 player full surface layer failed.' }
-
-$V624 = Join-Path $RepoRoot 'layers/apply-v6.2.4-tactical-ui.py'
-if (-not (Test-Path -LiteralPath $V624)) { throw "Element v6.2.4 tactical max workflow layer missing: $V624" }
-python $V624
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.4 tactical max workflow layer failed.' }
-
-$V625 = Join-Path $RepoRoot 'layers/apply-v6.2.5-club-tactical-certifier-ui.py'
-if (-not (Test-Path -LiteralPath $V625)) { throw "Element v6.2.5 club tactical certifier UI layer missing: $V625" }
-python $V625
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.5 club tactical certifier UI layer failed.' }
-
-$V626 = Join-Path $RepoRoot 'layers/apply-v6.2.6-selected-club-tactical-max.py'
-if (-not (Test-Path -LiteralPath $V626)) { throw "Element v6.2.6 selected-club tactical MAX layer missing: $V626" }
-python $V626
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6 selected-club tactical MAX layer failed.' }
-
-$V6261 = Join-Path $RepoRoot 'layers/apply-v6.2.6.1-tactical-max-compile-hotfix.py'
-if (-not (Test-Path -LiteralPath $V6261)) { throw "Element v6.2.6.1 tactical MAX compile hotfix missing: $V6261" }
-python $V6261
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.1 tactical MAX compile hotfix failed.' }
-
-$V6262 = Join-Path $RepoRoot 'layers/apply-v6.2.6.2-tactical-max-diagnostics.py'
-if (-not (Test-Path -LiteralPath $V6262)) { throw "Element v6.2.6.2 tactical MAX diagnostics missing: $V6262" }
-python $V6262
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.2 tactical MAX diagnostics failed.' }
-
-$V627 = Join-Path $RepoRoot 'layers/apply-v6.2.7-tactical-missing-fields-probe.py'
-if (-not (Test-Path -LiteralPath $V627)) { throw "Element v6.2.7 tactical missing-fields probe missing: $V627" }
-python $V627
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.7 tactical missing-fields probe failed.' }
-
-$V628 = Join-Path $RepoRoot 'layers/apply-v6.2.8-tactical-smart-probe.py'
-if (-not (Test-Path -LiteralPath $V628)) { throw "Element v6.2.8 tactical smart probe missing: $V628" }
-python $V628
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.8 tactical smart probe failed.' }
-
-$V629 = Join-Path $RepoRoot 'layers/apply-v6.2.9-match-exposure-shape-probe.py'
-if (-not (Test-Path -LiteralPath $V629)) { throw "Element v6.2.9 match exposure / shape probe missing: $V629" }
-python $V629
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.9 match exposure / shape probe failed.' }
-
-$V630 = Join-Path $RepoRoot 'layers/apply-v6.3.0-tactical-candidate-matrix.py'
-if (-not (Test-Path -LiteralPath $V630)) { throw "Element v6.3.0 tactical candidate matrix missing: $V630" }
-python $V630
-if ($LASTEXITCODE -ne 0) { throw 'Element v6.3.0 tactical candidate matrix failed.' }
-
-Write-Host 'Element release stack applied through v6.3.0 Tactical Candidate Matrix successfully.'
+Write-Host 'Element release stack applied through v6.4.0 FMRTE Reference Integration successfully.'
