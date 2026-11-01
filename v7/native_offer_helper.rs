@@ -168,8 +168,6 @@ unsafe fn run_probe() -> Result<String, String> {
     }
     progress("05 IL2CPP domain acquired");
 
-    // The helper runs on a Win32 thread created outside Unity. IL2CPP metadata
-    // APIs are not safe on that thread until it is attached to the domain.
     let il2cpp_thread = thread_attach(domain);
     if il2cpp_thread.is_null() {
         return Err("il2cpp_thread_attach returned null".into());
@@ -194,7 +192,7 @@ unsafe fn run_probe() -> Result<String, String> {
             ("GamePlugin.SendEvent", "FM.GamePlugin", "GamePlugin", "SendEvent", 3),
         ];
 
-        for (idx, (label, ns, class_name, method_name, argc)) in targets.into_iter().enumerate() {
+        for (idx, &(label, ns, class_name, method_name, argc)) in targets.iter().enumerate() {
             progress(&format!("08.{} scanning {label}", idx + 1));
             match find_method(
                 assemblies,
