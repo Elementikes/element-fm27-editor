@@ -75,21 +75,27 @@ if '=== NATIVE OFFER KNOWN-ID MAPPER v8.8 ===' not in t:
             lines.push("Read-only: asks InteropReference.TryGetValue for the PersonReference and ClubReference keys indicated by their native ReferenceID prefixes. No action is dispatched.".to_string());
             const PERSON_KEY:u32=0x44420001;
             const CLUB_KEY:u32=0x44420003;
-            match v88_construct_ref("FM.UI","PersonReference",pi,assemblies,count,assembly_get_image,class_from_name,class_get_methods,method_get_name,method_get_param_count,method_get_param,type_get_name,runtime_invoke,object_new){
-                Ok(o)=>{lines.push(v88_try_get_value("PLAYER/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("PLAYER/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
-                Err(e)=>lines.push(format!("PLAYER KEY MAP ERROR: {e}")),
-            }
-            match v88_construct_ref("FM.UI","ClubReference",ci,assemblies,count,assembly_get_image,class_from_name,class_get_methods,method_get_name,method_get_param_count,method_get_param,type_get_name,runtime_invoke,object_new){
-                Ok(o)=>{lines.push(v88_try_get_value("CLUB/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("CLUB/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
-                Err(e)=>lines.push(format!("CLUB KEY MAP ERROR: {e}")),
-            }
-            match v88_singleton("FM.UI","ActionReference",assemblies,count,assembly_get_image,class_from_name,class_get_method,runtime_invoke){
-                Ok(o)=>{lines.push(v88_try_get_value("ACTION/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("ACTION/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
-                Err(e)=>lines.push(format!("ACTION KEY MAP ERROR: {e}")),
-            }
-            match v88_singleton("FM.UI","TransferOfferEditSessionReference",assemblies,count,assembly_get_image,class_from_name,class_get_method,runtime_invoke){
-                Ok(o)=>{lines.push(v88_try_get_value("SESSION/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("SESSION/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
-                Err(e)=>lines.push(format!("SESSION KEY MAP ERROR: {e}")),
+            match read_certifier_request(){
+                Ok((pidx,cidx))=>{
+                    match v88_construct_ref("FM.UI","PersonReference",pidx,assemblies,count,assembly_get_image,class_from_name,class_get_methods,method_get_name,method_get_param_count,method_get_param,type_get_name,runtime_invoke,object_new){
+                        Ok(o)=>{lines.push(v88_try_get_value("PLAYER/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("PLAYER/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
+                        Err(e)=>lines.push(format!("PLAYER KEY MAP ERROR: {e}")),
+                    }
+                    match v88_construct_ref("FM.UI","ClubReference",cidx,assemblies,count,assembly_get_image,class_from_name,class_get_methods,method_get_name,method_get_param_count,method_get_param,type_get_name,runtime_invoke,object_new){
+                        Ok(o)=>{lines.push(v88_try_get_value("CLUB/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("CLUB/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
+                        Err(e)=>lines.push(format!("CLUB KEY MAP ERROR: {e}")),
+                    }
+                    match v88_singleton("FM.UI","ActionReference",assemblies,count,assembly_get_image,class_from_name,class_get_method,runtime_invoke){
+                        Ok(o)=>{lines.push(v88_try_get_value("ACTION/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("ACTION/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
+                        Err(e)=>lines.push(format!("ACTION KEY MAP ERROR: {e}")),
+                    }
+                    match v88_singleton("FM.UI","TransferOfferEditSessionReference",assemblies,count,assembly_get_image,class_from_name,class_get_method,runtime_invoke){
+                        Ok(o)=>{lines.push(v88_try_get_value("SESSION/PERSON_KEY",o,PERSON_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));lines.push(v88_try_get_value("SESSION/CLUB_KEY",o,CLUB_KEY,object_get_class,class_get_method,runtime_invoke,object_unbox));},
+                        Err(e)=>lines.push(format!("SESSION KEY MAP ERROR: {e}")),
+                    }
+                    lines.push(format!("V8.8 REQUEST: player_index={pidx} club_index={cidx}"));
+                },
+                Err(e)=>lines.push(format!("V8.8 REQUEST ERROR: {e}")),
             }
             lines.push("V8.8 GATE: PERSON_KEY should resolve to the selected player index and CLUB_KEY to the selected club index. Action/session hits tell us whether those references already carry transfer context.".to_string());
 '''
