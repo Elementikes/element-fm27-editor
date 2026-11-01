@@ -28,7 +28,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Apply Element v7.9 Full Core
+      - name: Apply Element v7.9.1 Full Core
         shell: pwsh
         run: |
           cd source
@@ -64,26 +64,28 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.9-fmrte-player-surfaces.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.9.1-relationships-borrow-hotfix.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build Element v7.9
+      - name: Build Element v7.9.1
         shell: pwsh
         run: |
           cd source
           cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v7.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v7.9 diagnostics
+      - name: Upload v7.9.1 diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v7.9-fmrte-player-surfaces-build-diagnostics
+          name: v7.9.1-fmrte-player-surfaces-build-diagnostics
           path: build-v7.log
           if-no-files-found: warn
 
-      - name: Stage v7.9
+      - name: Stage v7.9.1
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -92,9 +94,9 @@ jobs:
           if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
           if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
 
-      - name: Upload Element v7.9 Premium UI Windows x64
+      - name: Upload Element v7.9.1 Premium UI Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v7.9-FMRTE-PLAYER-SURFACES
+          name: Element-FM27-Editor-Windows-x64-v7.9.1-FMRTE-PLAYER-SURFACES
           path: dist/**
           if-no-files-found: error
