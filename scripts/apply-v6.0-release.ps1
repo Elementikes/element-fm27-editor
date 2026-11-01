@@ -86,4 +86,9 @@ if (-not (Test-Path -LiteralPath $V628)) { throw "Element v6.2.8 tactical smart 
 python $V628
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.8 tactical smart probe failed.' }
 
-Write-Host 'Element release stack applied through v6.2.8 Tactical Smart Probe successfully.'
+$V629 = Join-Path $RepoRoot 'layers/apply-v6.2.9-match-exposure-shape-probe.py'
+if (-not (Test-Path -LiteralPath $V629)) { throw "Element v6.2.9 match exposure / shape probe missing: $V629" }
+python $V629
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.9 match exposure / shape probe failed.' }
+
+Write-Host 'Element release stack applied through v6.2.9 Match Exposure / Shape Probe successfully.'
