@@ -1,0 +1,66 @@
+name: Build Element v7 Full Core Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'v7/**'
+      - '.github/workflows/build-v7-full-core.yml'
+
+jobs:
+  build-v7:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Element
+        uses: actions/checkout@v4
+        with:
+          path: element
+
+      - name: Checkout current FM27 editor core
+        uses: actions/checkout@v4
+        with:
+          repository: barak14/fm-editor
+          ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
+          path: source
+
+      - name: Apply Element v7 Full Core
+        shell: pwsh
+        run: |
+          cd source
+          python ../element/v7/apply-v7.0-full-core.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Element v7
+        shell: pwsh
+        run: |
+          cd source
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v7.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload v7 diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7.0-full-core-build-diagnostics
+          path: build-v7.log
+          if-no-files-found: warn
+
+      - name: Stage v7
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item source/target/release/fm-editor.exe dist/Element-FM27-Editor.exe
+          Copy-Item source/LICENSE dist/LICENSE
+          if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
+          if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
+
+      - name: Upload Element v7 Full Core Windows x64
+        uses: actions/upload-artifact@v4
+        with:
+          name: Element-FM27-Editor-Windows-x64-v7.0-FULL-CORE-PREVIEW
+          path: dist/**
+          if-no-files-found: error
