@@ -1,38 +1,56 @@
 {
-  "schemaVersion": 1,
-  "source": "Observed FMRTE27 Tactical Understanding surface; Element implementation is independent",
-  "squadScopes": ["First Team", "U19", "B Team"],
+  "schemaVersion": 2,
+  "source": "FMRTE27 resource semantics + Element live mapping; independent implementation",
+  "fmrtePresetActionChain": ["MaxTacticalFamiliarity","ImproveTeamCohesion"],
+  "squadScopes": [
+    {"id":"first_team","label":"First Team","status":"mapped-bulk"},
+    {"id":"b_team","label":"B Team","status":"team-type-map-pending"},
+    {"id":"u19","label":"U19","status":"team-type-map-pending"}
+  ],
   "groups": [
     {
-      "id":"in_possession",
-      "label":"In Possession",
+      "id":"in_possession","label":"In Possession",
       "metrics":[
-        {"id":"passing_style","label":"Passing Style","status":"probe-ready","scale":"0..100"},
-        {"id":"build_up","label":"Build Up","status":"probe-ready","scale":"0..100"},
-        {"id":"chance_creation","label":"Chance Creation","status":"probe-ready","scale":"0..100"}
+        {"id":"passing_style","label":"Passing Style","status":"mapped-through-instruction-vectors","scale":"0..100"},
+        {"id":"build_up","label":"Build Up","status":"mapped-through-instruction-vectors","scale":"0..100"},
+        {"id":"chance_creation","label":"Chance Creation","status":"mapped-through-instruction-vectors","scale":"0..100"}
       ]
     },
     {
-      "id":"out_of_possession",
-      "label":"Out of Possession",
+      "id":"out_of_possession","label":"Out of Possession",
       "metrics":[
-        {"id":"line_of_engagement","label":"Line of Engagement","status":"probe-ready","scale":"0..100"},
-        {"id":"pressing_intensity","label":"Pressing Intensity","status":"probe-ready","scale":"0..100"},
-        {"id":"pressing_trap","label":"Pressing Trap","status":"probe-ready","scale":"0..100"}
+        {"id":"line_of_engagement","label":"Line of Engagement","status":"mapped-through-instruction-vectors","scale":"0..100"},
+        {"id":"pressing_intensity","label":"Pressing Intensity","status":"mapped-through-instruction-vectors","scale":"0..100"},
+        {"id":"pressing_trap","label":"Pressing Trap","status":"mapped-through-instruction-vectors","scale":"0..100"}
       ]
     },
     {
-      "id":"role_position",
-      "label":"Position / Role",
+      "id":"role_position","label":"Position / Role",
       "metrics":[
-        {"id":"position_role","label":"Position/Role","status":"probe-ready","scale":"0..100"}
+        {"id":"position_role","label":"Position/Role","status":"mapped-through-formation-role-vector","scale":"0..100"}
       ]
     }
   ],
+  "bulkWrite": {
+    "firstTeam": "certified-live",
+    "knowledgeMaximum": 10000,
+    "preservePackedBits": true,
+    "readBack": true,
+    "undo": true,
+    "scopeGuard": "player team pointer must equal selected club SeniorTeam",
+    "cohesionAction": "semantic-found-not-mapped"
+  },
+  "fm27DerivedUI": {
+    "inPossessionShape":"not part of the FMRTE 7-axis editor surface; appears derived/contextual",
+    "outOfPossessionShape":"not part of the FMRTE 7-axis editor surface; appears derived/contextual",
+    "overallTacticalEffectiveness":"derived from Tactical Understanding + Player Ability + Player Buy-In + Next Match Info"
+  },
   "ui": {
     "showBars": true,
     "showNumericValues": true,
     "showSquadTabs": true,
+    "showMaxCurrentSquad": true,
+    "showFmrtePresetChain": true,
     "showDeveloperRawKeys": true,
     "developerRawKeysOnly": true
   }
