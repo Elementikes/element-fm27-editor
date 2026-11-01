@@ -91,4 +91,9 @@ if (-not (Test-Path -LiteralPath $V629)) { throw "Element v6.2.9 match exposure 
 python $V629
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.9 match exposure / shape probe failed.' }
 
-Write-Host 'Element release stack applied through v6.2.9 Match Exposure / Shape Probe successfully.'
+$V630 = Join-Path $RepoRoot 'layers/apply-v6.3.0-tactical-candidate-matrix.py'
+if (-not (Test-Path -LiteralPath $V630)) { throw "Element v6.3.0 tactical candidate matrix missing: $V630" }
+python $V630
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.3.0 tactical candidate matrix failed.' }
+
+Write-Host 'Element release stack applied through v6.3.0 Tactical Candidate Matrix successfully.'
