@@ -41,7 +41,7 @@ jobs:
           cd source
           git apply ../element/element-v0.2.patch
 
-      - name: Apply Element release stack through v6.2.9
+      - name: Apply Element release stack through v6.3.0
         shell: pwsh
         run: |
           cd source
@@ -61,7 +61,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v6.2.9-build-diagnostics
+          name: v6.3.0-build-diagnostics
           path: build-current.log
           if-no-files-found: error
 
@@ -79,6 +79,6 @@ jobs:
       - name: Upload Windows x64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v6.2.9-MATCH-EXPOSURE-SHAPE-PROBE
+          name: Element-FM27-Editor-Windows-x64-v6.3.0-TACTICAL-CANDIDATE-MATRIX
           path: dist/**
           if-no-files-found: error
