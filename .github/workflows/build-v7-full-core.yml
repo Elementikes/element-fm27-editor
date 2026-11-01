@@ -46,9 +46,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.5-club-squads.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.5.1-squads-compile-hotfix.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.6-staff-power-tools.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v7.7-club-power-tools.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.7.1-club-power-compile-hotfix.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
