@@ -81,4 +81,9 @@ if (-not (Test-Path -LiteralPath $V627)) { throw "Element v6.2.7 tactical missin
 python $V627
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.7 tactical missing-fields probe failed.' }
 
-Write-Host 'Element release stack applied through v6.2.7 Tactical Missing Fields Probe successfully.'
+$V628 = Join-Path $RepoRoot 'layers/apply-v6.2.8-tactical-smart-probe.py'
+if (-not (Test-Path -LiteralPath $V628)) { throw "Element v6.2.8 tactical smart probe missing: $V628" }
+python $V628
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.8 tactical smart probe failed.' }
+
+Write-Host 'Element release stack applied through v6.2.8 Tactical Smart Probe successfully.'
