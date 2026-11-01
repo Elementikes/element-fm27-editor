@@ -1,7 +1,8 @@
 {
-  "schemaVersion": 1,
-  "editorVersion": "6.0",
+  "schemaVersion": 2,
+  "editorVersion": "6.5.0",
   "game": "FM27",
+  "releaseChannel": "functional-core",
   "capabilities": [
     {"id":"player.attributes","label":"Player Attributes","entity":"Player","read":true,"write":true,"confidence":"certified","gate":null},
     {"id":"player.ca_pa","label":"Current / Potential Ability","entity":"Player","read":true,"write":true,"confidence":"certified","gate":null},
@@ -9,16 +10,23 @@
     {"id":"player.morale","label":"Morale","entity":"Player","read":true,"write":true,"confidence":"certified","gate":null},
     {"id":"player.contract","label":"Contract Core","entity":"Player","read":true,"write":true,"confidence":"cross-witnessed","gate":null},
     {"id":"player.heal","label":"Heal / Injury Removal","entity":"Player","read":true,"write":true,"confidence":"cross-witnessed","gate":"verified-injury-chain"},
+    {"id":"player.positions","label":"Positions","entity":"Player","read":true,"write":true,"confidence":"cross-witnessed","gate":null},
+    {"id":"player.preferred_moves","label":"Preferred Moves","entity":"Player","read":true,"write":true,"confidence":"cross-witnessed","gate":null},
+    {"id":"player.relationships","label":"Relationships • existing entries","entity":"Player","read":true,"write":true,"confidence":"cross-witnessed","gate":"existing-entry-value-only"},
+    {"id":"player.datahub.attributes","label":"Data Hub • Attribute Analytics / Percentiles","entity":"Player","read":true,"write":false,"confidence":"certified-read","gate":null},
+    {"id":"player.datahub.matchstats","label":"Data Hub • Native Match Stats (xG/xA/Dribbles etc.)","entity":"Player","read":false,"write":false,"confidence":"semantic-only","gate":"player-stats-record-chain"},
+    {"id":"player.move_to_club","label":"Move to Club","entity":"Transfer","read":true,"write":true,"confidence":"certified","gate":null},
     {"id":"club.finances","label":"Club Finances","entity":"Club","read":true,"write":true,"confidence":"certified","gate":null},
     {"id":"club.facilities","label":"Club Facilities","entity":"Club","read":true,"write":true,"confidence":"cross-witnessed","gate":null},
     {"id":"club.squads","label":"Club Squads","entity":"Club","read":true,"write":false,"confidence":"certified-read","gate":null},
+    {"id":"club.tactical_familiarity","label":"Tactical Familiarity • First Team MAX","entity":"Club","read":true,"write":true,"confidence":"certified","gate":"selected-senior-team-only"},
+    {"id":"club.team_cohesion","label":"Improve Team Cohesion","entity":"Club","read":false,"write":false,"confidence":"mapping","gate":"cohesion-record-chain"},
     {"id":"transfer.direct","label":"Force Buy • Direct Settlement","entity":"Transfer","read":true,"write":true,"confidence":"certified","gate":null},
-    {"id":"transfer.native_offer","label":"Native TransferOffer","entity":"Transfer","read":true,"write":false,"confidence":"mapping","gate":"two-independent-transfer-offer-witnesses"},
+    {"id":"transfer.native_offer","label":"Native Transfer Proposal / Offer","entity":"Transfer","read":true,"write":false,"confidence":"mapping","gate":"proposal-record-certification"},
     {"id":"registration.uefa","label":"UEFA Registration","entity":"Player","read":false,"write":false,"confidence":"semantic-only","gate":"registration-record-chain"},
     {"id":"registration.homegrown_club","label":"Trained At Club","entity":"Player","read":false,"write":false,"confidence":"semantic-only","gate":"homegrown-record-chain"},
     {"id":"registration.homegrown_nation","label":"Trained In Nation","entity":"Player","read":false,"write":false,"confidence":"semantic-only","gate":"homegrown-record-chain"},
-    {"id":"team.cohesion","label":"Team Cohesion","entity":"Club","read":false,"write":false,"confidence":"semantic-only","gate":"cohesion-record-chain"},
     {"id":"player.history","label":"Create History Point","entity":"Player","read":false,"write":false,"confidence":"semantic-only","gate":"history-record-chain"}
   ],
-  "confidenceOrder": ["unknown","candidate","semantic-only","witnessed","cross-witnessed","certified-read","certified"]
+  "confidenceOrder": ["unknown","candidate","semantic-only","mapping","witnessed","cross-witnessed","certified-read","certified"]
 }
