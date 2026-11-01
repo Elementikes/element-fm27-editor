@@ -30,6 +30,8 @@ jobs:
           cd source
           python ../element/v7/apply-v7.0-full-core.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v7.0.1-compile-hotfix.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -45,7 +47,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v7.0-full-core-build-diagnostics
+          name: v7.0.1-full-core-build-diagnostics
           path: build-v7.log
           if-no-files-found: warn
 
@@ -61,6 +63,6 @@ jobs:
       - name: Upload Element v7 Full Core Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v7.0-FULL-CORE-PREVIEW
+          name: Element-FM27-Editor-Windows-x64-v7.0.1-FULL-CORE-PREVIEW
           path: dist/**
           if-no-files-found: error
