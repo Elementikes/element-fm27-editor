@@ -76,4 +76,9 @@ if (-not (Test-Path -LiteralPath $V6262)) { throw "Element v6.2.6.2 tactical MAX
 python $V6262
 if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.6.2 tactical MAX diagnostics failed.' }
 
-Write-Host 'Element release stack applied through v6.2.6.2 Tactical MAX diagnostics successfully.'
+$V627 = Join-Path $RepoRoot 'layers/apply-v6.2.7-tactical-missing-fields-probe.py'
+if (-not (Test-Path -LiteralPath $V627)) { throw "Element v6.2.7 tactical missing-fields probe missing: $V627" }
+python $V627
+if ($LASTEXITCODE -ne 0) { throw 'Element v6.2.7 tactical missing-fields probe failed.' }
+
+Write-Host 'Element release stack applied through v6.2.7 Tactical Missing Fields Probe successfully.'
