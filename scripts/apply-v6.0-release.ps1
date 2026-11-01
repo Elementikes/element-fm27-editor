@@ -31,7 +31,8 @@ $layers = @(
   @('v6.4.3 FMRTE team cohesion mapper','apply-v6.4.3-team-cohesion-mapper.py'),
   @('v6.5.0 functional core stabilization','apply-v6.5.0-functional-core.py'),
   @('v6.5.1 Squads render hotfix','apply-v6.5.1-squads-render-hotfix.py'),
-  @('v6.6.0 IL2CPP-assisted Team Cohesion differential certifier','apply-v6.6.0-il2cpp-differential-certifier.py')
+  @('v6.6.0 IL2CPP-assisted Team Cohesion differential certifier','apply-v6.6.0-il2cpp-differential-certifier.py'),
+  @('v6.6.1 IL2CPP certifier compile hotfix','apply-v6.6.1-il2cpp-certifier-compile-hotfix.py')
 )
 
 foreach ($layer in $layers) {
@@ -42,4 +43,4 @@ foreach ($layer in $layers) {
   if ($LASTEXITCODE -ne 0) { throw "Element $label layer failed." }
 }
 
-Write-Host 'Element release stack applied through v6.6.0 IL2CPP Action Certifier successfully.'
+Write-Host 'Element release stack applied through v6.6.1 IL2CPP Action Certifier successfully.'
