@@ -5,6 +5,8 @@ use std::fs;
 use std::ptr::null_mut;
 
 const DLL_PROCESS_ATTACH: u32 = 1;
+const METHOD_ATTRIBUTE_STATIC: u32 = 0x0010;
+const FIELD_ATTRIBUTE_STATIC: u32 = 0x0010;
 
 type Handle = *mut c_void;
 type DomainGet = unsafe extern "C" fn() -> *mut c_void;
@@ -14,10 +16,19 @@ type DomainGetAssemblies = unsafe extern "C" fn(*const c_void, *mut usize) -> *m
 type AssemblyGetImage = unsafe extern "C" fn(*const c_void) -> *const c_void;
 type ClassFromName = unsafe extern "C" fn(*const c_void, *const c_char, *const c_char) -> *mut c_void;
 type ClassGetMethodFromName = unsafe extern "C" fn(*mut c_void, *const c_char, i32) -> *const c_void;
+type ClassGetFields = unsafe extern "C" fn(*mut c_void, *mut *mut c_void) -> *mut c_void;
+type ClassGetParent = unsafe extern "C" fn(*mut c_void) -> *mut c_void;
+type ClassGetName = unsafe extern "C" fn(*mut c_void) -> *const c_char;
+type ClassGetNamespace = unsafe extern "C" fn(*mut c_void) -> *const c_char;
 type MethodGetName = unsafe extern "C" fn(*const c_void) -> *const c_char;
 type MethodGetParamCount = unsafe extern "C" fn(*const c_void) -> u32;
 type MethodGetParam = unsafe extern "C" fn(*const c_void, u32) -> *const c_void;
 type MethodGetParamName = unsafe extern "C" fn(*const c_void, u32) -> *const c_char;
+type MethodGetFlags = unsafe extern "C" fn(*const c_void, *mut u32) -> u32;
+type FieldGetName = unsafe extern "C" fn(*mut c_void) -> *const c_char;
+type FieldGetType = unsafe extern "C" fn(*mut c_void) -> *const c_void;
+type FieldGetOffset = unsafe extern "C" fn(*mut c_void) -> usize;
+type FieldGetFlags = unsafe extern "C" fn(*mut c_void) -> u32;
 type TypeGetName = unsafe extern "C" fn(*const c_void) -> *mut c_char;
 
 #[link(name = "kernel32")]
@@ -72,20 +83,16 @@ unsafe fn cstr(ptr: *const c_char) -> String {
     }
 }
 
-unsafe fn find_method(
+unsafe fn find_class(
     assemblies: *mut *const c_void,
     assembly_count: usize,
     assembly_get_image: AssemblyGetImage,
     class_from_name: ClassFromName,
-    class_get_method: ClassGetMethodFromName,
     namespace: &str,
     class_name: &str,
-    method_name: &str,
-    argc: i32,
-) -> Option<*const c_void> {
+) -> Option<*mut c_void> {
     let ns = CString::new(namespace).ok()?;
     let cn = CString::new(class_name).ok()?;
-    let mn = CString::new(method_name).ok()?;
     for i in 0..assembly_count {
         let asm = *assemblies.add(i);
         if asm.is_null() {
@@ -96,12 +103,8 @@ unsafe fn find_method(
             continue;
         }
         let class = class_from_name(image, ns.as_ptr(), cn.as_ptr());
-        if class.is_null() {
-            continue;
-        }
-        let method = class_get_method(class, mn.as_ptr(), argc);
-        if !method.is_null() {
-            return Some(method);
+        if !class.is_null() {
+            return Some(class);
         }
     }
     None
@@ -114,6 +117,7 @@ unsafe fn describe_method(
     method_get_param_count: MethodGetParamCount,
     method_get_param: MethodGetParam,
     method_get_param_name: MethodGetParamName,
+    method_get_flags: MethodGetFlags,
     type_get_name: TypeGetName,
 ) -> String {
     let count = method_get_param_count(method);
@@ -126,9 +130,69 @@ unsafe fn describe_method(
             cstr(type_get_name(ty))
         };
         let param_name = cstr(method_get_param_name(method, i));
-        parts.push(format!("{param_name}:{type_name}"));
+        parts.push(format!("arg{i} {param_name}:{type_name}"));
     }
-    format!("{label} => {}({}) @ 0x{:X}", cstr(method_get_name(method)), parts.join(", "), method as usize)
+    let mut iflags = 0u32;
+    let flags = method_get_flags(method, &mut iflags);
+    format!(
+        "{label}\n  method={}\n  ptr=0x{:X}\n  flags=0x{flags:08X} iflags=0x{iflags:08X} static={}\n  argc={count}\n  {}",
+        cstr(method_get_name(method)),
+        method as usize,
+        if flags & METHOD_ATTRIBUTE_STATIC != 0 { "yes" } else { "no" },
+        parts.join("\n  ")
+    )
+}
+
+unsafe fn describe_class_fields(
+    class: *mut c_void,
+    class_get_fields: ClassGetFields,
+    class_get_parent: ClassGetParent,
+    class_get_name: ClassGetName,
+    class_get_namespace: ClassGetNamespace,
+    field_get_name: FieldGetName,
+    field_get_type: FieldGetType,
+    field_get_offset: FieldGetOffset,
+    field_get_flags: FieldGetFlags,
+    type_get_name: TypeGetName,
+) -> Vec<String> {
+    let mut lines = Vec::new();
+    let mut current = class;
+    let mut depth = 0usize;
+    while !current.is_null() && depth < 6 {
+        let class_name = cstr(class_get_name(current));
+        let namespace = cstr(class_get_namespace(current));
+        lines.push(format!("CLASS depth={depth} {namespace}.{class_name} @ 0x{:X}", current as usize));
+        let mut iter: *mut c_void = null_mut();
+        let mut seen = 0usize;
+        loop {
+            let field = class_get_fields(current, &mut iter);
+            if field.is_null() {
+                break;
+            }
+            seen += 1;
+            if seen > 256 {
+                lines.push("  field scan stopped after 256 entries".to_string());
+                break;
+            }
+            let name = cstr(field_get_name(field));
+            let ty = field_get_type(field);
+            let type_name = if ty.is_null() {
+                "<null-type>".to_string()
+            } else {
+                cstr(type_get_name(ty))
+            };
+            let offset = field_get_offset(field);
+            let flags = field_get_flags(field);
+            let static_tag = if flags & FIELD_ATTRIBUTE_STATIC != 0 { " STATIC" } else { "" };
+            lines.push(format!(
+                "  FIELD{name_sep}{name} type={type_name} offset=0x{offset:X} flags=0x{flags:08X}{static_tag}",
+                name_sep = " "
+            ));
+        }
+        current = class_get_parent(current);
+        depth += 1;
+    }
+    lines
 }
 
 unsafe fn run_probe() -> Result<String, String> {
@@ -155,10 +219,19 @@ unsafe fn run_probe() -> Result<String, String> {
     let assembly_get_image: AssemblyGetImage = resolve!("il2cpp_assembly_get_image", AssemblyGetImage);
     let class_from_name: ClassFromName = resolve!("il2cpp_class_from_name", ClassFromName);
     let class_get_method: ClassGetMethodFromName = resolve!("il2cpp_class_get_method_from_name", ClassGetMethodFromName);
+    let class_get_fields: ClassGetFields = resolve!("il2cpp_class_get_fields", ClassGetFields);
+    let class_get_parent: ClassGetParent = resolve!("il2cpp_class_get_parent", ClassGetParent);
+    let class_get_name: ClassGetName = resolve!("il2cpp_class_get_name", ClassGetName);
+    let class_get_namespace: ClassGetNamespace = resolve!("il2cpp_class_get_namespace", ClassGetNamespace);
     let method_get_name: MethodGetName = resolve!("il2cpp_method_get_name", MethodGetName);
     let method_get_param_count: MethodGetParamCount = resolve!("il2cpp_method_get_param_count", MethodGetParamCount);
     let method_get_param: MethodGetParam = resolve!("il2cpp_method_get_param", MethodGetParam);
     let method_get_param_name: MethodGetParamName = resolve!("il2cpp_method_get_param_name", MethodGetParamName);
+    let method_get_flags: MethodGetFlags = resolve!("il2cpp_method_get_flags", MethodGetFlags);
+    let field_get_name: FieldGetName = resolve!("il2cpp_field_get_name", FieldGetName);
+    let field_get_type: FieldGetType = resolve!("il2cpp_field_get_type", FieldGetType);
+    let field_get_offset: FieldGetOffset = resolve!("il2cpp_field_get_offset", FieldGetOffset);
+    let field_get_flags: FieldGetFlags = resolve!("il2cpp_field_get_flags", FieldGetFlags);
     let type_get_name: TypeGetName = resolve!("il2cpp_type_get_name", TypeGetName);
     progress("04 required IL2CPP exports resolved");
 
@@ -183,7 +256,8 @@ unsafe fn run_probe() -> Result<String, String> {
         progress(&format!("07 assemblies acquired: {count}"));
 
         let mut lines = Vec::new();
-        lines.push(format!("Element FM27 Native Offer Probe v8.4.3 | assemblies={count} | PersonMakeOfferForPlayer ActionID=0x73414278"));
+        lines.push(format!("Element FM27 Native Offer Inspector v8.4.4 | assemblies={count} | PersonMakeOfferForPlayer ActionID=0x73414278"));
+        lines.push("Goal: certify dispatcher signature + instance/static ownership before enabling SEND NATIVE AI OFFER.".to_string());
 
         let targets = [
             ("PluginContextActionsModule.HandleActionEvent", "FM.Game", "PluginContextActionsModule", "HandleActionEvent", 6),
@@ -194,33 +268,50 @@ unsafe fn run_probe() -> Result<String, String> {
 
         for (idx, &(label, ns, class_name, method_name, argc)) in targets.iter().enumerate() {
             progress(&format!("08.{} scanning {label}", idx + 1));
-            match find_method(
-                assemblies,
-                count,
-                assembly_get_image,
-                class_from_name,
-                class_get_method,
-                ns,
-                class_name,
-                method_name,
-                argc,
-            ) {
-                Some(method) => {
-                    progress(&format!("09.{} found {label}", idx + 1));
-                    lines.push(describe_method(
-                        label,
-                        method,
-                        method_get_name,
-                        method_get_param_count,
-                        method_get_param,
-                        method_get_param_name,
-                        type_get_name,
-                    ));
+            match find_class(assemblies, count, assembly_get_image, class_from_name, ns, class_name) {
+                Some(class) => {
+                    let mn = CString::new(method_name).unwrap();
+                    let method = class_get_method(class, mn.as_ptr(), argc);
+                    if method.is_null() {
+                        lines.push(format!("{label} => METHOD NOT FOUND"));
+                    } else {
+                        progress(&format!("09.{} found {label}", idx + 1));
+                        lines.push(describe_method(
+                            label,
+                            method,
+                            method_get_name,
+                            method_get_param_count,
+                            method_get_param,
+                            method_get_param_name,
+                            method_get_flags,
+                            type_get_name,
+                        ));
+                        if idx == 0 {
+                            lines.push("\nPluginContextActionsModule field / parent inspection:".to_string());
+                            lines.extend(describe_class_fields(
+                                class,
+                                class_get_fields,
+                                class_get_parent,
+                                class_get_name,
+                                class_get_namespace,
+                                field_get_name,
+                                field_get_type,
+                                field_get_offset,
+                                field_get_flags,
+                                type_get_name,
+                            ));
+                        }
+                    }
                 }
-                None => lines.push(format!("{label} => NOT FOUND")),
+                None => lines.push(format!("{label} => CLASS NOT FOUND")),
             }
         }
 
+        lines.push("\nCERTIFICATION CHECKLIST:".to_string());
+        lines.push("- HandleActionEvent exact six argument names/types: inspect above".to_string());
+        lines.push("- static=no requires a live PluginContextActionsModule instance candidate".to_string());
+        lines.push("- static=yes allows direct guarded runtime/native invocation once arguments are mapped".to_string());
+        lines.push("- no offer is sent by this inspector".to_string());
         Ok(lines.join("\n"))
     })();
 
