@@ -2,10 +2,6 @@ name: Snapshot v6 Generated Source for v7 Porting
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - '.github/workflows/snapshot-v6-generated.yml'
 
 jobs:
   snapshot:
