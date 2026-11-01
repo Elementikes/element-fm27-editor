@@ -1,4 +1,4 @@
-name: Build Element v7 Full Core Windows
+name: Build Element v8 Full Core Windows
 
 on:
   workflow_dispatch:
@@ -9,11 +9,11 @@ on:
       - '.github/workflows/build-v7-full-core.yml'
 
 concurrency:
-  group: element-v7-full-core-${{ github.ref }}
+  group: element-v8-full-core-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-v7:
+  build-v8:
     runs-on: windows-latest
     steps:
       - name: Checkout Element
@@ -28,7 +28,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Apply Element v8.1.1 Full Core
+      - name: Apply Element v8.2 Full Write Engine
         shell: pwsh
         run: |
           cd source
@@ -80,26 +80,28 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v8.1.1-field-ref-hotfix.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.2-full-write-engine.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build Element v8.1.1
+      - name: Build Element v8.2
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v7.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v8.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v8.1.1 diagnostics
+      - name: Upload v8.2 diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v8.1.1-buttons-live-build-diagnostics
-          path: build-v7.log
+          name: v8.2-full-write-build-diagnostics
+          path: build-v8.log
           if-no-files-found: warn
 
-      - name: Stage v8.1.1
+      - name: Stage v8.2
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -108,9 +110,9 @@ jobs:
           if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
           if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
 
-      - name: Upload Element v8.1.1 Buttons Live Windows x64
+      - name: Upload Element v8.2 Full Write Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v8.1.1-BUTTONS-LIVE
+          name: Element-FM27-Editor-Windows-x64-v8.2-FULL-WRITE
           path: dist/**
           if-no-files-found: error
