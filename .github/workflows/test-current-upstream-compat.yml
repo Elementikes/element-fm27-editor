@@ -6,6 +6,7 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/test-current-upstream-compat.yml'
+      - 'compat/apply-current-upstream-element-base.py'
 
 jobs:
   compat:
@@ -23,7 +24,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Probe Element base patch and release stack
+      - name: Probe adapted Element release stack
         shell: pwsh
         continue-on-error: true
         run: |
@@ -31,19 +32,13 @@ jobs:
           New-Item -ItemType Directory -Force -Path diag | Out-Null
           "UPSTREAM=b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1" | Tee-Object diag/compat.log
           Push-Location source
-          bash -lc 'git apply --check ../element/element-v0.2.patch' 2>&1 | Tee-Object -Append ../diag/compat.log
+          python ../element/compat/apply-current-upstream-element-base.py 2>&1 | Tee-Object -Append ../diag/compat.log
           if ($LASTEXITCODE -ne 0) {
-            "STAGE=BASE_PATCH_CHECK_FAILED" | Tee-Object -Append ../diag/compat.log
+            "STAGE=BASE_ADAPTER_FAILED" | Tee-Object -Append ../diag/compat.log
             Pop-Location
             exit 0
           }
-          bash -lc 'git apply ../element/element-v0.2.patch' 2>&1 | Tee-Object -Append ../diag/compat.log
-          if ($LASTEXITCODE -ne 0) {
-            "STAGE=BASE_PATCH_APPLY_FAILED" | Tee-Object -Append ../diag/compat.log
-            Pop-Location
-            exit 0
-          }
-          "STAGE=BASE_PATCH_OK" | Tee-Object -Append ../diag/compat.log
+          "STAGE=BASE_ADAPTER_OK" | Tee-Object -Append ../diag/compat.log
           & ../element/scripts/apply-v6.0-release.ps1 2>&1 | Tee-Object -Append ../diag/compat.log
           if ($LASTEXITCODE -ne 0) {
             "STAGE=ELEMENT_STACK_FAILED" | Tee-Object -Append ../diag/compat.log
