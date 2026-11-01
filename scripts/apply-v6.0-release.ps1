@@ -27,7 +27,8 @@ $layers = @(
   @('v6.3.0 tactical candidate matrix','apply-v6.3.0-tactical-candidate-matrix.py'),
   @('v6.4.0 FMRTE reference integration','apply-v6.4.0-fmrte-reference-integration.py'),
   @('v6.4.1 tactical FMRTE UI cleanup','apply-v6.4.1-tactical-fmrte-ui-cleanup.py'),
-  @('v6.4.2 FMRTE tactical chain hardening','apply-v6.4.2-in-possession-chain-hardening.py')
+  @('v6.4.2 FMRTE tactical chain hardening','apply-v6.4.2-in-possession-chain-hardening.py'),
+  @('v6.4.3 FMRTE team cohesion mapper','apply-v6.4.3-team-cohesion-mapper.py')
 )
 
 foreach ($layer in $layers) {
@@ -38,4 +39,4 @@ foreach ($layer in $layers) {
   if ($LASTEXITCODE -ne 0) { throw "Element $label layer failed." }
 }
 
-Write-Host 'Element release stack applied through v6.4.2 FMRTE Tactical Chain Hardening successfully.'
+Write-Host 'Element release stack applied through v6.4.3 FMRTE Team Cohesion Mapper successfully.'
