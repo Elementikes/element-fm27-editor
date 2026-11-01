@@ -28,7 +28,7 @@ jobs:
           ref: b377ec5bba4ffb7dd37c9347c9d0dac051cf8fd1
           path: source
 
-      - name: Apply Element v8.4.2 Relations Pro + Native Offer Lab
+      - name: Apply Element v8.4.4 Relations Pro + Native Offer Inspector
         shell: pwsh
         run: |
           cd source
@@ -92,35 +92,37 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python ../element/v7/apply-v8.4.2-embed-native-helper.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python ../element/v7/apply-v8.4.4-native-offer-inspector-ui.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build v8.4.2 native offer probe helper
+      - name: Build v8.4.4 native offer inspector helper
         shell: pwsh
         run: |
           cd source
-          rustc ../element/v7/native_offer_helper.rs -O --crate-type cdylib -o Element-FM27-NativeOffer.dll 2>&1 | Tee-Object ../helper-v8.4.2.log
+          rustc ../element/v7/native_offer_helper.rs -O --crate-type cdylib -o Element-FM27-NativeOffer.dll 2>&1 | Tee-Object ../helper-v8.4.4.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Build Element v8.4.2
+      - name: Build Element v8.4.4
         shell: pwsh
         run: |
           cd source
-          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v8.4.2.log
+          cargo build --release --locked --message-format=short 2>&1 | Tee-Object ../build-v8.4.4.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload v8.4.2 diagnostics
+      - name: Upload v8.4.4 diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: v8.4.2-embedded-helper-diagnostics
+          name: v8.4.4-native-offer-inspector-diagnostics
           path: |
-            build-v8.4.2.log
-            helper-v8.4.2.log
+            build-v8.4.4.log
+            helper-v8.4.4.log
           if-no-files-found: warn
 
-      - name: Stage v8.4.2
+      - name: Stage v8.4.4
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -130,9 +132,9 @@ jobs:
           if (Test-Path source/README.md) { Copy-Item source/README.md dist/README-UPSTREAM.md }
           if (Test-Path source/CHANGELOG.md) { Copy-Item source/CHANGELOG.md dist/CHANGELOG-UPSTREAM.md }
 
-      - name: Upload Element v8.4.2 Relations Pro Native Offer Lab Windows x64
+      - name: Upload Element v8.4.4 Relations Pro Native Offer Inspector Windows x64
         uses: actions/upload-artifact@v4
         with:
-          name: Element-FM27-Editor-Windows-x64-v8.4.2-RELATIONS-PRO-NATIVE-OFFER-LAB
+          name: Element-FM27-Editor-Windows-x64-v8.4.4-NATIVE-OFFER-INSPECTOR
           path: dist/**
           if-no-files-found: error
