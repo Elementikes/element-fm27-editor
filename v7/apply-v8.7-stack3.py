@@ -39,10 +39,11 @@ patches = [
     'apply-v8.6.1-worker-probe-shape.py',
     'apply-v8.7-index-interop-certifier.py',
     'apply-v8.7.1-helper-resolver-hotfix.py',
+    'apply-v8.8-native-offer-known-id-map.py',
 ]
 
 for name in patches:
     print(f'=== APPLY {name} ===', flush=True)
     runpy.run_path(str(here / name), run_name='__main__')
 
-print('Element v8.7 full stack3 applied.', flush=True)
+print('Element v8.8 full stack applied.', flush=True)
