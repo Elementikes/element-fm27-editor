@@ -29,7 +29,8 @@ $layers = @(
   @('v6.4.1 tactical FMRTE UI cleanup','apply-v6.4.1-tactical-fmrte-ui-cleanup.py'),
   @('v6.4.2 FMRTE tactical chain hardening','apply-v6.4.2-in-possession-chain-hardening.py'),
   @('v6.4.3 FMRTE team cohesion mapper','apply-v6.4.3-team-cohesion-mapper.py'),
-  @('v6.5.0 functional core stabilization','apply-v6.5.0-functional-core.py')
+  @('v6.5.0 functional core stabilization','apply-v6.5.0-functional-core.py'),
+  @('v6.5.1 Squads render hotfix','apply-v6.5.1-squads-render-hotfix.py')
 )
 
 foreach ($layer in $layers) {
@@ -40,4 +41,4 @@ foreach ($layer in $layers) {
   if ($LASTEXITCODE -ne 0) { throw "Element $label layer failed." }
 }
 
-Write-Host 'Element release stack applied through v6.5.0 Functional Core successfully.'
+Write-Host 'Element release stack applied through v6.5.1 Functional Core Squads Hotfix successfully.'
