@@ -1,0 +1,42 @@
+name: Snapshot v6 Generated Source for v7 Porting
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/snapshot-v6-generated.yml'
+
+jobs:
+  snapshot:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Element
+        uses: actions/checkout@v4
+        with:
+          path: element
+
+      - name: Checkout historical upstream
+        uses: actions/checkout@v4
+        with:
+          repository: barak14/fm-editor
+          ref: 3b41801958e874210ac884fd81222e9ea06c88b8
+          path: source
+
+      - name: Apply Element v6 stack
+        shell: pwsh
+        run: |
+          cd source
+          git apply ../element/element-v0.2.patch
+          & ../element/scripts/apply-v6.0-release.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload generated source
+        uses: actions/upload-artifact@v4
+        with:
+          name: Element-v6.6.1-generated-source
+          path: |
+            source/src/**
+            source/Cargo.toml
+            source/Cargo.lock
+          if-no-files-found: error
