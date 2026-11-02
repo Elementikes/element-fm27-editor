@@ -46,10 +46,11 @@ patches = [
     'apply-v8.11-static-property-id-decoder.py',
     'apply-v8.12-inheritance-property-id-decoder.py',
     'apply-v8.13-semantic-property-descriptor-probe.py',
+    'apply-v8.13.1-helper-freshness-pin.py',
 ]
 
 for name in patches:
     print(f'=== APPLY {name} ===', flush=True)
     runpy.run_path(str(here / name), run_name='__main__')
 
-print('Element v8.13 guarded semantic property mapper full stack applied.', flush=True)
+print('Element v8.13.1 semantic mapper + helper freshness pin full stack applied.', flush=True)
