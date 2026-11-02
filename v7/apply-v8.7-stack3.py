@@ -50,6 +50,7 @@ patches = [
     'apply-v8.14-type-context-semantic-map.py',
     'apply-v8.14.1-report-freshness-pin.py',
     'apply-v8.15.1-cp1252-hotfix.py',
+    'apply-v8.15.2-helper-tryinto-hotfix.py',
 ]
 
 for name in patches:
