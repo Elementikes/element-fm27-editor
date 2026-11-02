@@ -49,7 +49,7 @@ patches = [
     'apply-v8.13.1-helper-freshness-pin.py',
     'apply-v8.14-type-context-semantic-map.py',
     'apply-v8.14.1-report-freshness-pin.py',
-    'apply-v8.15-native-offer-payload-dry-run.py',
+    'apply-v8.15.1-cp1252-hotfix.py',
 ]
 
 for name in patches:
