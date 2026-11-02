@@ -43,10 +43,11 @@ patches = [
     'apply-v8.9-real-interop-property-map.py',
     'apply-v8.9.1-safe-property-api-inspector.py',
     'apply-v8.10-native-property-code-map.py',
+    'apply-v8.11-static-property-id-decoder.py',
 ]
 
 for name in patches:
     print(f'=== APPLY {name} ===', flush=True)
     runpy.run_path(str(here / name), run_name='__main__')
 
-print('Element v8.10 native property code map full stack applied.', flush=True)
+print('Element v8.11 static PropertyID decoder full stack applied.', flush=True)
