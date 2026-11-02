@@ -49,10 +49,11 @@ patches = [
     'apply-v8.13.1-helper-freshness-pin.py',
     'apply-v8.14-type-context-semantic-map.py',
     'apply-v8.14.1-report-freshness-pin.py',
+    'apply-v8.15-native-offer-payload-dry-run.py',
 ]
 
 for name in patches:
     print(f'=== APPLY {name} ===', flush=True)
     runpy.run_path(str(here / name), run_name='__main__')
 
-print('Element v8.14.1 type + context semantic map + report freshness pin full stack applied.', flush=True)
+print('Element v8.15 native offer payload dry run full stack applied.', flush=True)
